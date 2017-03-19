@@ -71,38 +71,6 @@ Task.edit = function(id, data, callback) {
   })
 }
 
-// Task.markAsComplete = function(id, callback) {
-
-//   pool.connect(function(err, client, done) {
-//     if(err) {
-//       return console.error('error CONNECTING UPDATE', err)
-//     }
-
-//     client.query("UPDATE tasks SET completed=true WHERE id=" + id + ";", function(err, result) {
-//       if(err) {
-//         return console.error('error running UPDATE', err)
-//       }
-//       done(err)
-//       return callback();
-//     })
-//   })
-// }
-// Task.markAsIncomplete = function(id, callback) {
-
-//   pool.connect(function(err, client, done) {
-//     if(err) {
-//       return console.error('error CONNECTING UPDATE', err)
-//     }
-
-//     client.query("UPDATE tasks SET completed=false WHERE id=" + id + ";", function(err, result) {
-//       if(err) {
-//         return console.error('error running UPDATE', err)
-//       }
-//       done(err)
-//       return callback();
-//     })
-//   })
-// }
 Task.deleteById = function(id, callback) {
   pool.connect(function(err, client, done) {
     if(err) {

@@ -2,6 +2,8 @@
 var rp = require('request-promise');
 var Task = require('../models/tasks.js')
 var helpers = require('../helpers/helpers.js')
+
+var taskController = require('../controllers/taskController.js')
 // var configAuth = require('../config/auth');
 
 module.exports = function(app, passport) {
@@ -194,22 +196,6 @@ module.exports = function(app, passport) {
       task.save(function() {
         res.redirect('/profile')
       });
-    })
-
-    app.post('/tasks/complete/:id', function(req, res) {
-      var id = req.params.id
-
-      Task.markAsComplete(id, function() {
-        res.redirect('back')
-      })
-    })
-
-    app.post('/tasks/incomplete/:id', function(req, res) {
-      var id = req.params.id
-
-      Task.markAsIncomplete(id, function() {
-        res.redirect('back')
-      })
     })
 
     app.post('/tasks/delete/:id', function(req, res) {
