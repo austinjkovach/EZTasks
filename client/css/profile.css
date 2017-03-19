@@ -1,0 +1,75 @@
+input[type="submit"] {
+  width: 200px;
+}
+
+
+.card-holder {
+    min-height: 500px;
+    background: #b4d455;
+
+}
+
+@media(min-width: 768px) {
+  .col-sm-2 {
+    width: 14%;
+    padding: 0;
+    border: 1px solid #000;
+  }
+}
+
+.card {
+  display: inline-block;
+  position: relative;
+  cursor: move;
+
+  height: 78px;
+  width: 100%;
+
+  border: 1px solid #666;
+  background-color: grey;
+
+  color: white;
+  text-align: center;
+}
+
+.card-text {
+  line-height: 78px;
+}
+
+.card.complete {
+  background-color: green;
+}
+
+.card-success, .card-primary, .card-danger {
+  position: absolute;
+  bottom: 0;
+
+  line-height: 0px;
+
+  height: 20px;
+  width: 30px;
+  border: none;
+  color: white;
+}
+
+.card-success {
+  left: 0;
+  background: green;
+}
+
+.card-danger {
+  right: 0;
+  background: red;
+}
+
+.card-primary {
+  background: blue;
+  left: 67px;
+}
+
+.card-primary a {
+  color: white;
+  height: 100%;
+  line-height: 16px;
+  text-decoration: none;
+}

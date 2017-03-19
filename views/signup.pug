@@ -1,0 +1,15 @@
+
+
+html
+  head
+    title Hlep
+    link(rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css")
+    link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css")
+  body
+    .container
+      form(action="/signup", method="post")
+        label Email
+        input(type="text", name="email")
+        label Password
+        input(type="password", name="password")
+        input.btn.btn-warning.btn-lg(type="submit", value="submit")

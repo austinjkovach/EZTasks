@@ -1,0 +1,60 @@
+link(rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css")
+link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css")
+link(rel="stylesheet" href="css/profile.css")
+
+.jumbotron= user.email
+  .tasks #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length}
+.container
+  .row
+    .col-xs-12.col-md-6
+      form#newTask( action="/tasks/create", method="post")
+            .input-group
+              input(type="text", placeholder="Add Task", name="text", autofocus="true").form-control
+              span.input-group-btn
+                input(type="submit" value="+").btn.btn-primary
+  .row
+    .col-xs-12
+      .col-sm-2.col-xs-12
+        .text-center M
+        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)").storage
+          each task, index in tasks
+            if !(task.completed)
+              .card(ondragstart="dragStart(event)", draggable="true", data-info=index)
+                .card-text= task.text
+                form(action="/tasks/complete/" + task.id, method="post")
+                  button.card-success(type="submit") &#10004;
+                a(href="/tasks/edit/" + task.id)
+                  button.card-primary  &#9998;
+                form(action="/tasks/delete/" + task.id, method="post")
+                  button.card-danger(type="submit") &#10006;
+            else
+              .card.complete(ondragstart="dragStart(event)", draggable="true", data-info=index)
+                .card-text= task.text
+                form(action="/tasks/incomplete/" + task.id, method="post")
+                  button.card-success(type="submit") &#10004;
+                a(href="/tasks/edit/" + task.id)
+                  button.card-primary  &#9998;
+                form(action="/tasks/delete/" + task.id, method="post")
+                  button.card-danger(type="submit") &#10006;
+      .col-sm-2.col-xs-12
+        .text-center T
+        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
+      .col-sm-2.col-xs-12
+        .text-center W
+        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
+      .col-sm-2.col-xs-12
+        .text-center Th
+        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
+      .col-sm-2.col-xs-12
+        .text-center F
+        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
+      .col-sm-2.col-xs-12
+        .text-center Sat
+        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
+      .col-sm-2.col-xs-12
+        .text-center Sun
+        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
+
+
+script(src="js/controllers/taskController.js")
+script(src="js/dropLogic.js")
