@@ -82,7 +82,7 @@ module.exports = function(app, passport) {
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function(req, res) {
 
-        Task.getTasksByUser(req.user, function(tasks) {
+        taskController.getTasksByUser(req.user, function(tasks) {
 
           // console.log('render profile tasks:', tasks)
 
@@ -99,8 +99,6 @@ module.exports = function(app, passport) {
               tasks : tasks
           });
         })
-
-
     });
 
     // =====================================
@@ -152,9 +150,30 @@ module.exports = function(app, passport) {
     //   res.render('/tasks')
     // })
 
+    app.post('/tasks/create', function(req, res) {
+
+      // validate text input
+      helpers.validateTextInput(req.body.text, function(err, validText) {
+        if(err) {
+          console.error('Field cannot be blank')
+
+          // show error to user
+          res.redirect('back')
+          return
+        }
+
+        // create task model
+        var task = taskController.createTask(validText, req.user.id)
+
+        task.save(function() {
+          res.redirect('/profile')
+        });
+      })
+    })
+
     app.get('/tasks/edit/:id', function(req, res) {
 
-      var task = Task.findById(req.params.id, function(task) {
+      var task = taskController.findById(req.params.id, function(task) {
 
         res.render('edittask', { task: task })
       })
@@ -162,47 +181,35 @@ module.exports = function(app, passport) {
     })
 
     app.post('/tasks/edit/:id', function(req, res) {
-
+      // TODO validate user permissions
       var id = req.params.id
-
-      var text = req.body.text
       var completedBool = helpers.transformCheckboxData(req.body)
 
-      var data = {
-        text: text,
-        completed: completedBool
+      // TODO fix this hack - fit logic in helper
+      if(req.headers.referer === 'http://localhost:4000/profile') {
+        completedBool = !completedBool
       }
 
-      console.log('edit data', data)
+      helpers.validateTextInput(req.body.text, function(err, validText) {
 
-      Task.edit(id, data, function() {
-        res.redirect('back')
+        var data = {
+          text: validText,
+          completed: completedBool
+        }
+
+        taskController.editTask(id, data, function() {
+          res.redirect('back')
+        })
       })
 
-    })
 
-    app.post('/tasks/create', function(req, res) {
-
-      var text;
-      if(req.body.text === "") {
-        text = "test"
-      }
-      else {
-        text = req.body.text
-      }
-
-      var task = new Task(text, req.user.id)
-
-      task.save(function() {
-        res.redirect('/profile')
-      });
     })
 
     app.post('/tasks/delete/:id', function(req, res) {
       var id = req.params.id
       var redirectPath = helpers.resolveRedirectPath(req.headers)
 
-      Task.deleteById(id, function() {
+      taskController.deleteById(id, function() {
         res.redirect(redirectPath)
       })
     })

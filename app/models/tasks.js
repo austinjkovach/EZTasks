@@ -48,81 +48,81 @@ Task.prototype.save = function(callback) {
   })
 }
 
-Task.edit = function(id, data, callback) {
-  var completionString = ''
+// Task.edit = function(id, data, callback) {
+//   var completionString = ''
 
-  if(data.completed) {
-    var timestamp = helpers.getTimestamp()
-    completionString = ", completedon='" + timestamp + "'"
-  }
+//   if(data.completed) {
+//     var timestamp = helpers.getTimestamp()
+//     completionString = ", completedon='" + timestamp + "'"
+//   }
 
-  pool.connect(function(err, client, done) {
-    if(err) {
-      return console.error('error CONNECTING UPDATE', err)
-    }
+//   pool.connect(function(err, client, done) {
+//     if(err) {
+//       return console.error('error CONNECTING UPDATE', err)
+//     }
 
-    client.query("UPDATE tasks SET text='" + data.text + "', completed=" + data.completed + completionString + " WHERE id=" + id + ";", function(err, result) {
-      if(err) {
-        return console.error('error running UPDATE', err)
-      }
-      done(err)
-      return callback();
-    })
-  })
-}
+//     client.query("UPDATE tasks SET text='" + data.text + "', completed=" + data.completed + completionString + " WHERE id=" + id + ";", function(err, result) {
+//       if(err) {
+//         return console.error('error running UPDATE', err)
+//       }
+//       done(err)
+//       return callback();
+//     })
+//   })
+// }
 
-Task.deleteById = function(id, callback) {
-  pool.connect(function(err, client, done) {
-    if(err) {
-      return console.error('error CONNECTING DELETE', err)
-    }
+// Task.deleteById = function(id, callback) {
+//   pool.connect(function(err, client, done) {
+//     if(err) {
+//       return console.error('error CONNECTING DELETE', err)
+//     }
 
-    client.query("DELETE FROM tasks WHERE id=" + id + ";", function(err, result) {
-      if(err) {
-        return console.error('error running DELETE query', err)
-      }
+//     client.query("DELETE FROM tasks WHERE id=" + id + ";", function(err, result) {
+//       if(err) {
+//         return console.error('error running DELETE query', err)
+//       }
 
-      done(err)
-      return callback();
-    })
-  })
-}
+//       done(err)
+//       return callback();
+//     })
+//   })
+// }
 
-Task.findById = function(id, callback) {
-  pool.connect(function(err, client, done) {
-    if(err) {
-      return console.error('error connecting SELECT', err)
-    }
+// Task.findById = function(id, callback) {
+//   pool.connect(function(err, client, done) {
+//     if(err) {
+//       return console.error('error connecting SELECT', err)
+//     }
 
-    client.query("SELECT * FROM tasks WHERE id=" + id + ";", function(err, result) {
-      if(err) {
-        return console.error('error running SELECT query', err)
-      }
+//     client.query("SELECT * FROM tasks WHERE id=" + id + ";", function(err, result) {
+//       if(err) {
+//         return console.error('error running SELECT query', err)
+//       }
 
-      done(err)
+//       done(err)
 
-      return callback(result.rows[0])
-    })
-  })
-}
+//       return callback(result.rows[0])
+//     })
+//   })
+// }
 
-Task.getTasksByUser = function(user, callback) {
-  var id = user.id
+// Task.getTasksByUser = function(user, callback) {
+//   var id = user.id
 
-  pool.connect(function(err, client, done) {
-    if(err) {
-      return console.error('error connecting SELECT', err)
-    }
-    client.query("SELECT id, text, completed FROM tasks WHERE owner=" + id + " ORDER BY completed, createdon ASC;", function(err, result) {
-      if(err){
-          return console.error('error running SELECT query', err);
-      }
+//   pool.connect(function(err, client, done) {
+//     if(err) {
+//       return console.error('error connecting SELECT', err)
+//     }
+//     client.query("SELECT id, text, completed FROM tasks WHERE owner=" + id + " ORDER BY completed, createdon ASC;", function(err, result) {
+//       if(err){
+//           return console.error('error running SELECT query', err);
+//       }
 
-      done(err)
-      return callback(result.rows);
+//       done(err)
+//       return callback(result.rows);
 
-    })
-  })
-}
+//     })
+//   })
+// }
 
 module.exports = Task

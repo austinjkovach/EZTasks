@@ -73,6 +73,42 @@ module.exports = {
         return callback();
       })
     })
-  }
+  },
 
+  getTasksByUser: function(user, callback) {
+    var id = user.id
+
+    pool.connect(function(err, client, done) {
+      if(err) {
+        return console.error('error connecting SELECT', err)
+      }
+      client.query("SELECT id, text, completed FROM tasks WHERE owner=" + id + " ORDER BY completed, createdon ASC;", function(err, result) {
+        if(err){
+            return console.error('error running SELECT query', err);
+        }
+
+        done(err)
+        return callback(result.rows);
+
+      })
+    })
+  },
+
+  findById: function(id, callback) {
+    pool.connect(function(err, client, done) {
+      if(err) {
+        return console.error('error connecting SELECT', err)
+      }
+
+      client.query("SELECT * FROM tasks WHERE id=" + id + ";", function(err, result) {
+        if(err) {
+          return console.error('error running SELECT query', err)
+        }
+
+        done(err)
+
+        return callback(result.rows[0])
+      })
+    })
+  }
 }

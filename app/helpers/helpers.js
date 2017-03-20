@@ -24,5 +24,14 @@ module.exports = {
     else {
       return "back"
     }
+  },
+
+  validateTextInput: function(text, callback) {
+    if(text === "") {
+      return callback(false, "Test")
+    }
+    else {
+      return callback(false, text);
+    }
   }
 }

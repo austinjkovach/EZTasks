@@ -21,8 +21,10 @@ link(rel="stylesheet" href="css/profile.css")
             if !(task.completed)
               .card(ondragstart="dragStart(event)", draggable="true", data-info=index)
                 .card-text= task.text
-                form(action="/tasks/complete/" + task.id, method="post")
+                form(action="/tasks/edit/" + task.id, method="post")
                   button.card-success(type="submit") &#10004;
+                  input(type="hidden", name="text", value=task.text)
+                  input(type="checkbox", name="completed", style="display:none")
                 a(href="/tasks/edit/" + task.id)
                   button.card-primary  &#9998;
                 form(action="/tasks/delete/" + task.id, method="post")
@@ -30,8 +32,10 @@ link(rel="stylesheet" href="css/profile.css")
             else
               .card.complete(ondragstart="dragStart(event)", draggable="true", data-info=index)
                 .card-text= task.text
-                form(action="/tasks/incomplete/" + task.id, method="post")
+                form(action="/tasks/edit/" + task.id, method="post")
                   button.card-success(type="submit") &#10004;
+                  input(type="hidden", name="text", value=task.text)
+                  input(type="checkbox", name="completed", checked, style="display:none")
                 a(href="/tasks/edit/" + task.id)
                   button.card-primary  &#9998;
                 form(action="/tasks/delete/" + task.id, method="post")
