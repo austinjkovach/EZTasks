@@ -14,8 +14,8 @@ input[type="submit"] {
 
 .progress-bar {
   width: 0;
-  transition: width, .5s;
-  background: linear-gradient(90deg, hsla(360, 100%, 50%, 1), hsla(100, 100%, 50%, 1));
+  transition: width, background-color, .5s cubic-bezier(1, 0.5, 0.5, 1);
+  background-color: hsla(0, 50%, 50%, 1);
   border-radius: 20px;
   margin-left: 5px;
 }

@@ -63,13 +63,20 @@ link(rel="stylesheet" href="css/profile.css")
         .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
 script.
 
+  // progress bar logic
   setTimeout(function() {
     var progBar = document.querySelector('.progress-bar')
 
-    var setWidth = #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length}
-    console.log(setWidth)
+    var setWidth = #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length};
     progBar.style.width = '' + (setWidth * 100) + '%'
 
+    var targetHue = (setWidth * 100) * 1.2
+
+
+    //- console.log(setWidth)
+    //- console.log('targetHue', targetHue)
+    progBar.style.backgroundColor = "hsla( " + targetHue + ", 100%, 50%, 1)";
+    //- console.log('background:', progBar.style.backgroundColor)
   }, 0)
 
 
