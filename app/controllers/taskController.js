@@ -23,7 +23,7 @@ module.exports = {
       if(err) {
         return console.error('error connecting SELECT', err)
       }
-      client.query("SELECT id, text, completed FROM tasks WHERE owner=" + id + " ORDER BY completed, createdon ASC;", function(err, result) {
+      client.query("SELECT id, text, completed, day FROM tasks WHERE owner=" + id + " ORDER BY completed, createdon ASC;", function(err, result) {
         if(err){
             return console.error('error running SELECT query', err);
         }
@@ -58,6 +58,25 @@ module.exports = {
     })
   },
 
+  changeDay:function(id, data, callback) {
+
+    var day = data.day
+
+    pool.connect(function(err, client, done) {
+      if(err) {
+        return console.error('error CONNECTING UPDATE', err)
+      }
+
+      client.query("UPDATE tasks SET day='" + data.day + "' WHERE id=" + id + ";", function(err, result) {
+        if(err) {
+          return console.error('error running UPDATE', err)
+        }
+        done(err)
+        return callback();
+      })
+    })
+  },
+
   deleteById: function(id, callback) {
     pool.connect(function(err, client, done) {
       if(err) {
@@ -71,25 +90,6 @@ module.exports = {
 
         done(err)
         return callback();
-      })
-    })
-  },
-
-  getTasksByUser: function(user, callback) {
-    var id = user.id
-
-    pool.connect(function(err, client, done) {
-      if(err) {
-        return console.error('error connecting SELECT', err)
-      }
-      client.query("SELECT id, text, completed FROM tasks WHERE owner=" + id + " ORDER BY completed, createdon ASC;", function(err, result) {
-        if(err){
-            return console.error('error running SELECT query', err);
-        }
-
-        done(err)
-        return callback(result.rows);
-
       })
     })
   },

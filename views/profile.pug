@@ -1,83 +1,69 @@
-link(rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css")
-link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css")
-link(rel="stylesheet" href="css/profile.css")
+extends _partials/_layout.pug
 
-.jumbotron= user.email
-  .tasks #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length}
-    .progress-container
-      .progress-bar
+block content
+  link(rel="stylesheet" href="css/profile.css")
 
-.container
-  .row
-    .col-xs-12.col-md-6
-      form#newTask( action="/tasks/create", method="post")
-            .input-group
-              input(type="text", placeholder="Add Task", name="text", autofocus="true").form-control
-              span.input-group-btn
-                input(type="submit" value="+").btn.btn-success
-  .row
-    .col-xs-12
-      .col-sm-2.col-xs-12
-        .text-center M
-        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)").storage
-          each task, index in tasks
-            if !(task.completed)
-              .card(ondragstart="dragStart(event)", draggable="true", data-info=index)
-                .card-text= task.text
-                form(action="/tasks/edit/" + task.id, method="post")
-                  button.card-success(type="submit") &#10004;
-                  input(type="hidden", name="text", value=task.text)
-                  input(type="checkbox", name="completed", style="display:none")
-                a(href="/tasks/edit/" + task.id)
-                  button.card-primary  &#9998;
-                form(action="/tasks/delete/" + task.id, method="post")
-                  button.card-danger(type="submit") &#10006;
-            else
-              .card.complete(ondragstart="dragStart(event)", draggable="true", data-info=index)
-                .card-text= task.text
-                form(action="/tasks/edit/" + task.id, method="post")
-                  button.card-success(type="submit") &#10004;
-                  input(type="hidden", name="text", value=task.text)
-                  input(type="checkbox", name="completed", checked, style="display:none")
-                a(href="/tasks/edit/" + task.id)
-                  button.card-primary  &#9998;
-                form(action="/tasks/delete/" + task.id, method="post")
-                  button.card-danger(type="submit") &#10006;
-      .col-sm-2.col-xs-12
-        .text-center T
-        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
-      .col-sm-2.col-xs-12
-        .text-center W
-        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
-      .col-sm-2.col-xs-12
-        .text-center Th
-        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
-      .col-sm-2.col-xs-12
-        .text-center F
-        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
-      .col-sm-2.col-xs-12
-        .text-center Sat
-        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
-      .col-sm-2.col-xs-12
-        .text-center Sun
-        .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)")
-script.
+  .jumbotron= user.email
+    .tasks #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length}
+      .progress-container
+        .progress-bar
 
-  // progress bar logic
-  setTimeout(function() {
-    var progBar = document.querySelector('.progress-bar')
+  .container
+    .row
+      .col-xs-12.col-md-6
+        form#newTask( action="/tasks/create", method="post")
+              .input-group
+                input(type="text", placeholder="Add Task", name="text", autofocus="true").form-control
+                span.input-group-btn
+                  input(type="submit" value="+").btn.btn-success
+    .row
+      .col-xs-12
+        each day, dayIndex in ['M', 'T', 'W', 'TH', 'F', 'SAT', 'SUN']
+          .col-sm-2.col-xs-12
+              .text-center=day
+              .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)", data-column-id=dayIndex)
+                each task, index in tasks
+                  if task.day === dayIndex
+                    if !(task.completed)
+                      .card(ondragstart="dragStart(event)", draggable="true", data-info=index, data-id=task.id)
+                        .card-text= task.text
+                        form(action="/tasks/edit/" + task.id, method="post")
+                          button.card-success(type="submit") &#10004;
+                          input(type="hidden", name="text", value=task.text)
+                          input(type="checkbox", name="completed", style="display:none")
+                        a(href="/tasks/edit/" + task.id)
+                          button.card-primary  &#9998;
+                        form(action="/tasks/delete/" + task.id, method="post")
+                          button.card-danger(type="submit") &#10006;
+                    else
+                      .card.complete(ondragstart="dragStart(event)", draggable="true", data-info=index, data-id=task.id)
+                        .card-text= task.text
+                        form(action="/tasks/edit/" + task.id, method="post")
+                          button.card-success(type="submit") &#10004;
+                          input(type="hidden", name="text", value=task.text)
+                          input(type="checkbox", name="completed", checked, style="display:none")
+                        a(href="/tasks/edit/" + task.id)
+                          button.card-primary  &#9998;
+                        form(action="/tasks/delete/" + task.id, method="post")
+                          button.card-danger(type="submit") &#10006;
 
-    var setWidth = #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length};
-    progBar.style.width = '' + (setWidth * 100) + '%'
+  script.
 
-    var targetHue = (setWidth * 100) * 1.2
+    // progress bar logic
+    setTimeout(function() {
+      var progBar = document.querySelector('.progress-bar')
+
+      var setWidth = #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length};
+      progBar.style.width = '' + (setWidth * 100) + '%'
+
+      var targetHue = (setWidth * 100) * 1.2
 
 
-    //- console.log(setWidth)
-    //- console.log('targetHue', targetHue)
-    progBar.style.backgroundColor = "hsla( " + targetHue + ", 100%, 50%, 1)";
-    //- console.log('background:', progBar.style.backgroundColor)
-  }, 0)
+      //- console.log(setWidth)
+      //- console.log('targetHue', targetHue)
+      progBar.style.backgroundColor = "hsla( " + targetHue + ", 100%, 50%, 1)";
+      //- console.log('background:', progBar.style.backgroundColor)
+    }, 0)
 
 
-script(src="js/dropLogic.js")
+  script(src="js/dropLogic.js")

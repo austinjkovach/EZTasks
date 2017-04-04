@@ -84,8 +84,6 @@ module.exports = function(app, passport) {
 
         taskController.getTasksByUser(req.user, function(tasks) {
 
-          // console.log('render profile tasks:', tasks)
-
           var completed = tasks.filter(function(task) {
             return task.completed
           })
@@ -182,10 +180,18 @@ module.exports = function(app, passport) {
 
     app.post('/tasks/edit/:id', function(req, res) {
       // TODO validate user permissions
+
+      console.log('req.body', req.body)
+
       var id = req.params.id
       var completedBool = helpers.transformCheckboxData(req.body)
 
+      console.log('completedBool', completedBool)
+
       // TODO fix this hack - fit logic in helper
+
+      console.log('referer:', req.headers.referer)
+
       if(req.headers.referer === 'http://localhost:4000/profile') {
         completedBool = !completedBool
       }
@@ -213,6 +219,21 @@ module.exports = function(app, passport) {
         res.redirect(redirectPath)
       })
     })
+
+    app.post('/tasks/changeday/:id', function(req, res) {
+
+      console.log('changeday req.body', req.body)
+
+      var redirectPath = helpers.resolveRedirectPath(req.headers)
+      var data = {
+        day: req.body.day
+      }
+
+      taskController.changeDay(req.params.id, data, function(){
+        res.redirect('/profile')
+      })
+    })
+
 };
 
 // route middleware to make sure a user is logged in

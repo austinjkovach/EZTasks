@@ -9,6 +9,13 @@ function dropContent(e) {
 
   //==> If setting one card on top of another, want to target parent container
   var target = e.target
+  console.log('drop target:', target)
+
+  var targetDataId = target.dataset.columnId
+
+  console.log('drop target id:', targetDataId)
+
+
   if(target.classList.contains('card')) {
     target = target.parentNode
   }
@@ -22,13 +29,55 @@ function dropContent(e) {
 
   //=> returns node based on data-info attribute
   var card = document.querySelector('[data-info="' + data + '"]')
+  var id = card.dataset.id
+
+  sendCardChange(id, targetDataId)
 
   //==> append node to target
-  target.appendChild(card)
+  // target.appendChild(card)
 }
 
 // required to allow dropping:
 // https://msdn.microsoft.com/library/ms536929(v=vs.85).aspx
 function allowDrop(e) {
   e.preventDefault()
+}
+
+function sendCardChange(id, target) {
+
+  // httpRequest.open('POST', '/tasks/changeday/' + id, true);
+  post('/tasks/changeday/' + id, { day: target })
+}
+
+
+
+
+/*
+
+ THIS FEELS SO WRONG
+ http://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit
+
+*/
+
+function post(path, params) {
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
 }

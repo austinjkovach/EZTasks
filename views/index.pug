@@ -1,8 +1,11 @@
+extends _partials/_layout.pug
 
-.container Index
-  div
-    a(href="/auth/google") Google
+block content
+  .jumbotron Sign In
+  .container
+    a.btn.btn-danger(href="/auth/google") Google
   //- div
-  //-   a(href="/login" method="post") Login
+  //-   form(action="/login", method="post")
+  //-     input.btn.btn-primary(type="submit", value="Log In")
   //- div
   //-   a(href="/signup") signup
