@@ -181,17 +181,10 @@ module.exports = function(app, passport) {
     app.post('/tasks/edit/:id', function(req, res) {
       // TODO validate user permissions
 
-      console.log('req.body', req.body)
-
       var id = req.params.id
       var completedBool = helpers.transformCheckboxData(req.body)
 
-      console.log('completedBool', completedBool)
-
       // TODO fix this hack - fit logic in helper
-
-      console.log('referer:', req.headers.referer)
-
       if(req.headers.referer === 'http://localhost:4000/profile') {
         completedBool = !completedBool
       }
@@ -202,6 +195,8 @@ module.exports = function(app, passport) {
           text: validText,
           completed: completedBool
         }
+
+        console.log('edit data:', data)
 
         taskController.editTask(id, data, function() {
           res.redirect('back')

@@ -5,6 +5,8 @@ function dragStart(e) {
   e.dataTransfer.setData("text", e.target.dataset.info)
 }
 
+
+// TODO REFACTOR THIS
 function dropContent(e) {
 
   //==> If setting one card on top of another, want to target parent container
@@ -30,10 +32,20 @@ function dropContent(e) {
   //=> returns node based on data-info attribute
   var card = document.querySelector('[data-info="' + data + '"]')
   var id = card.dataset.id
+  var cardInputs = card.querySelectorAll('input')
+  var postData = { day: target.dataset.columnId }
 
-  sendCardChange(id, targetDataId)
+  for( var i=0; i<cardInputs.length; i++ ) {
+    var currentInput = cardInputs[i]
+
+    postData[currentInput.name] = currentInput.value
+  }
+  console.log('postData', postData)
+
+  post('/tasks/changeday/' + id, postData)
 
   //==> append node to target
+  //==> Not needed now that we refresh page
   // target.appendChild(card)
 }
 
@@ -42,15 +54,6 @@ function dropContent(e) {
 function allowDrop(e) {
   e.preventDefault()
 }
-
-function sendCardChange(id, target) {
-
-  // httpRequest.open('POST', '/tasks/changeday/' + id, true);
-  post('/tasks/changeday/' + id, { day: target })
-}
-
-
-
 
 /*
 

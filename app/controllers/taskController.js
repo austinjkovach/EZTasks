@@ -36,11 +36,18 @@ module.exports = {
   },
 
   editTask: function(id, data, callback) {
-    var completionString = ''
+    // var textString = ''
+    var completedString = ''
+    var completedOnString = ''
+    var dayString = ''
 
     if(data.completed) {
       var timestamp = helpers.getTimestamp()
-      completionString = ", completedon='" + timestamp + "'"
+      completedOnString = ", completedon='" + timestamp + "'"
+    }
+
+    if(data.day) {
+      dayString = ", day=" + data.day
     }
 
     pool.connect(function(err, client, done) {
@@ -48,7 +55,7 @@ module.exports = {
         return console.error('error CONNECTING UPDATE', err)
       }
 
-      client.query("UPDATE tasks SET text='" + data.text + "', completed=" + data.completed + completionString + " WHERE id=" + id + ";", function(err, result) {
+      client.query("UPDATE tasks SET text='" + data.text + "', completed=" + data.completed + dayString + completedOnString + " WHERE id=" + id + ";", function(err, result) {
         if(err) {
           return console.error('error running UPDATE', err)
         }
@@ -71,6 +78,8 @@ module.exports = {
         if(err) {
           return console.error('error running UPDATE', err)
         }
+
+        console.log('result:', result)
         done(err)
         return callback();
       })
