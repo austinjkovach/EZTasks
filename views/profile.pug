@@ -4,9 +4,9 @@ block content
   link(rel="stylesheet" href="css/profile.css")
 
   .jumbotron= user.email
+    .progress-container
+      .progress-bar
     .tasks #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length}
-      .progress-container
-        .progress-bar
 
   .container
     .row
@@ -24,11 +24,10 @@ block content
               .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)", data-column-id=dayIndex)
                 each task, index in tasks
                   if task.day === dayIndex
-                    if !(task.completed)
+                    if (!task.completed)
                       .card(ondragstart="dragStart(event)", draggable="true", data-info=index, data-id=task.id)
                         .card-text= task.text
-                        form(action="/tasks/edit/" + task.id, method="post")
-                          button.card-success(type="submit") &#10004;
+                          button.card-success &#10004;
                           input(type="hidden", name="text", value=task.text)
                           input(type="checkbox", name="completed", style="display:none")
                         a(href="/tasks/edit/" + task.id)
@@ -38,8 +37,7 @@ block content
                     else
                       .card.complete(ondragstart="dragStart(event)", draggable="true", data-info=index, data-id=task.id)
                         .card-text= task.text
-                        form(action="/tasks/edit/" + task.id, method="post")
-                          button.card-success(type="submit") &#10004;
+                          button.card-success &#10004;
                           input(type="hidden", name="text", value=task.text)
                           input(type="checkbox", name="completed", checked, style="display:none")
                         a(href="/tasks/edit/" + task.id)

@@ -36,12 +36,15 @@ module.exports = {
   },
 
   editTask: function(id, data, callback) {
+    // TODO only updated completedon if the task is completed
+
     // var textString = ''
     var completedString = ''
     var completedOnString = ''
     var dayString = ''
 
-    if(data.completed) {
+    console.log('data in editTask', data)
+    if(data.completed === 'true') {
       var timestamp = helpers.getTimestamp()
       completedOnString = ", completedon='" + timestamp + "'"
     }
@@ -79,7 +82,6 @@ module.exports = {
           return console.error('error running UPDATE', err)
         }
 
-        console.log('result:', result)
         done(err)
         return callback();
       })
@@ -117,6 +119,24 @@ module.exports = {
         done(err)
 
         return callback(result.rows[0])
+      })
+    })
+  },
+  testFunc: function() {
+    return 1;
+  },
+  getWeek: function(callback) {
+    //==>  https://www.postgresql.org/message-id/A3AC4FA47DC0B1458C3E5396E685E63302395E27@SAB-DC1.sab.uiuc.edu
+    pool.connect(function(err, client, done) {
+      if(err) {
+        return console.error('error connecting ', err)
+      }
+      client.query("SELECT * FROM tasks WHERE createdon > (CURRENT_DATE - INTERVAL '7 days')::date;", function(err, result) {
+        if(err) {
+        return console.error('error query ', err)
+        }
+        done(err)
+        return callback(result.rows)
       })
     })
   }

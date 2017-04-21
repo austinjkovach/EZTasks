@@ -8,7 +8,10 @@ module.exports = {
   },
 
   transformCheckboxData: function(data) {
-    return data.completed === "on"
+    if(data.completed === undefined) {
+      return false
+    }
+    return data.completed === "on" || data.completed
   },
 
   resolveRedirectPath: function(headers) {
@@ -27,11 +30,38 @@ module.exports = {
   },
 
   validateTextInput: function(text, callback) {
-    if(text === "") {
-      return callback(false, "Test")
+
+    if (callback) {
+
+      if(text === "") {
+        return callback(false, "Test")
+      }
+      else {
+        return callback(false, text);
+      }
     }
     else {
-      return callback(false, text);
+      if(text === "") {
+       return "Test"
+      }
+      else {
+       return text;
+      }
     }
+
+  },
+
+  dataTransformer: function(obj) {
+    var output = {}
+    var keys = Object.keys(obj)
+
+    keys.forEach(function(key) {
+      output[key] = obj[key]
+    })
+
+    output.completed = this.transformCheckboxData(output)
+    output.text = this.validateTextInput(output.text)
+
+    return output
   }
 }

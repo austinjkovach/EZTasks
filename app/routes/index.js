@@ -80,9 +80,9 @@ module.exports = function(app, passport) {
     // =====================================
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
-    app.get('/profile', isLoggedIn, function(req, res) {
+    app.get('/profile', function(req, res) {
 
-        taskController.getTasksByUser(req.user, function(tasks) {
+        taskController.getTasksByUser({id: 1}, function(tasks) {
 
           var completed = tasks.filter(function(task) {
             return task.completed
@@ -93,7 +93,7 @@ module.exports = function(app, passport) {
           })
 
           res.render('profile', {
-              user : req.user, // get the user out of session and pass to template
+              user : {id: 1}, // get the user out of session and pass to template
               tasks : tasks
           });
         })
@@ -161,7 +161,7 @@ module.exports = function(app, passport) {
         }
 
         // create task model
-        var task = taskController.createTask(validText, req.user.id)
+        var task = taskController.createTask(validText, 1)
 
         task.save(function() {
           res.redirect('/profile')
@@ -182,28 +182,11 @@ module.exports = function(app, passport) {
       // TODO validate user permissions
 
       var id = req.params.id
-      var completedBool = helpers.transformCheckboxData(req.body)
+      var data = helpers.dataTransformer(req.body)
 
-      // TODO fix this hack - fit logic in helper
-      if(req.headers.referer === 'http://localhost:4000/profile') {
-        completedBool = !completedBool
-      }
-
-      helpers.validateTextInput(req.body.text, function(err, validText) {
-
-        var data = {
-          text: validText,
-          completed: completedBool
-        }
-
-        console.log('edit data:', data)
-
-        taskController.editTask(id, data, function() {
-          res.redirect('back')
-        })
+      taskController.editTask(id, data, function() {
+        res.redirect('back')
       })
-
-
     })
 
     app.post('/tasks/delete/:id', function(req, res) {

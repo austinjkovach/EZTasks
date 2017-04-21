@@ -1,3 +1,18 @@
+var cardSuccess = document.querySelectorAll('.card-success')
+
+
+for(var i=0;i<cardSuccess.length;i++) {
+  cardSuccess[i].addEventListener('click', function(e) {
+
+    var id = e.target.parentNode.parentNode.dataset.id
+    var text = e.target.parentNode.querySelector('input:nth-child(2)').value
+    var completed = !e.target.parentNode.querySelector('input:nth-child(3)').checked
+
+    var postData = { completed: completed, text: text }
+    post('/tasks/edit/' + id, postData)
+  })
+}
+
 function dragStart(e) {
 
   //==> store data-info attribute
@@ -11,12 +26,7 @@ function dropContent(e) {
 
   //==> If setting one card on top of another, want to target parent container
   var target = e.target
-  console.log('drop target:', target)
-
   var targetDataId = target.dataset.columnId
-
-  console.log('drop target id:', targetDataId)
-
 
   if(target.classList.contains('card')) {
     target = target.parentNode
@@ -31,18 +41,26 @@ function dropContent(e) {
 
   //=> returns node based on data-info attribute
   var card = document.querySelector('[data-info="' + data + '"]')
+
+
+  //=> Grab form values from inputs
   var id = card.dataset.id
+
   var cardInputs = card.querySelectorAll('input')
   var postData = { day: target.dataset.columnId }
 
   for( var i=0; i<cardInputs.length; i++ ) {
     var currentInput = cardInputs[i]
 
-    postData[currentInput.name] = currentInput.value
+    if(currentInput.type === "checkbox") {
+      postData[currentInput.name] = currentInput.checked
+    }
+    else {
+      postData[currentInput.name] = currentInput.value
+    }
   }
-  console.log('postData', postData)
-
-  post('/tasks/changeday/' + id, postData)
+  console.log('click postData', postData)
+  post('/tasks/edit/' + id, postData)
 
   //==> append node to target
   //==> Not needed now that we refresh page
@@ -75,6 +93,7 @@ function post(path, params) {
             var hiddenField = document.createElement("input");
             hiddenField.setAttribute("type", "hidden");
             hiddenField.setAttribute("name", key);
+
             hiddenField.setAttribute("value", params[key]);
 
             form.appendChild(hiddenField);

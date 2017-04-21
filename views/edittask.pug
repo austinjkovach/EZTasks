@@ -1,53 +1,54 @@
-link(rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css")
-link(rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css")
-link(rel="stylesheet" href="../../css/edittask.css")
+extends _partials/_layout.pug
 
-.container
-  .row
-    .col-xs-12
-        if task.completed
-          .panel.panel-success
-            .panel-heading Complete!
-            .panel-body
-              .row
-                .col-xs-12.col-md-6
-                  form(action="/tasks/edit/" + task.id, method="post")
-                    .input-group
-                      input(name="text", value=task.text).form-control
-                      span.input-group-btn
-                        button(type="submit").btn.btn-primary Save Changes
-                    .slider-container
-                      label.switch
-                        input(name="completed", type="checkbox", checked)
-                        .slider.round
-              .row
-                .col-xs-12
-                  form(action="/tasks/delete/" + task.id, method="post").pull-right
-                    button(type="submit").btn.btn-danger Delete Task
-                      i.fa.fa-trash
-        else
-          .panel.panel-danger
-            .panel-heading &#128169; Incomplete &#128169;
-            .panel-body
-              .row
-                .col-xs-12.col-md-6
-                  form(action="/tasks/edit/" + task.id, method="post")
-                    .input-group
-                      input(name="text", value=task.text).form-control
-                      span.input-group-btn
-                        button(type="submit").btn.btn-primary Save Changes
-                    .slider-container
-                      label.switch
-                        input(name="completed", type="checkbox")
-                        .slider.round
-              .row
-                .col-xs-12
-                  form(action="/tasks/delete/" + task.id, method="post").pull-right
-                    button(type="submit").btn.btn-danger Delete Task
-                      i.fa.fa-trash
-  .row
-    .col-xs-12
-      a(href="/profile")
-        button.btn.btn-default
-          i.fa.fa-arrow-left &nbsp;
-          span Back to Profile
+block content
+  link(rel="stylesheet" href="../../css/edittask.css")
+
+  .container
+    .row
+      .col-xs-12
+          if task.completed
+            .panel.panel-success
+              .panel-heading Complete!
+              .panel-body
+                .row
+                  .col-xs-12.col-md-6
+                    form(action="/tasks/edit/" + task.id, method="post")
+                      .input-group
+                        input(name="text", value=task.text).form-control
+                        span.input-group-btn
+                          button(type="submit").btn.btn-primary Save Changes
+                      .slider-container
+                        label.switch
+                          input(name="completed", type="checkbox", checked)
+                          .slider.round
+                .row
+                  .col-xs-12
+                    form(action="/tasks/delete/" + task.id, method="post").pull-right
+                      button(type="submit").btn.btn-danger Delete Task
+                        i.fa.fa-trash
+          else
+            .panel.panel-danger
+              .panel-heading &#128169; Incomplete &#128169;
+              .panel-body
+                .row
+                  .col-xs-12.col-md-6
+                    form(action="/tasks/edit/" + task.id, method="post")
+                      .input-group
+                        input(name="text", value=task.text).form-control
+                        span.input-group-btn
+                          button(type="submit").btn.btn-primary Save Changes
+                      .slider-container
+                        label.switch
+                          input(name="completed", type="checkbox")
+                          .slider.round
+                .row
+                  .col-xs-12
+                    form(action="/tasks/delete/" + task.id, method="post").pull-right
+                      button(type="submit").btn.btn-danger Delete Task
+                        i.fa.fa-trash
+    .row
+      .col-xs-12
+        a(href="/profile")
+          button.btn.btn-default
+            i.fa.fa-arrow-left &nbsp;
+            span Back to Profile
