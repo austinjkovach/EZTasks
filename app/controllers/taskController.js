@@ -36,7 +36,6 @@ module.exports = {
   },
 
   editTask: function(id, data, callback) {
-    // TODO only updated completedon if the task is completed
 
     // var textString = ''
     var completedString = ''
@@ -101,6 +100,29 @@ module.exports = {
 
         done(err)
         return callback();
+      })
+    })
+  },
+
+  validateUserAuthorization: function(user, taskId, callback) {
+    pool.connect(function(err, client, done) {
+      if(err) {
+        return console.error('error connecting AUTH SELECT', err)
+      }
+
+      client.query("SELECT owner FROM tasks WHERE id=" + taskId + ";", function(err, result) {
+        if(err) {
+          return console.error('error running SELECT query', err)
+        }
+
+        done(err)
+
+        var validationResults = result.rows[0].owner === user.id
+
+        console.log('results owner:', result.rows, 'user', user)
+        console.log('validation Results:', validationResults)
+
+        return callback(validationResults)
       })
     })
   },

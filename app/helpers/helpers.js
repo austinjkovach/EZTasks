@@ -17,6 +17,7 @@ module.exports = {
   resolveRedirectPath: function(headers) {
     var referer = headers.referrer || headers.referer
 
+    // TODO Fix bug when trying to edit tasks that aren't the owner's
     if(!referer) {
       return console.error('No referer')
     }

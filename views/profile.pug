@@ -46,22 +46,30 @@ block content
                           button.card-danger(type="submit") &#10006;
 
   script.
-
     // progress bar logic
+    var progBar;
+
     setTimeout(function() {
-      var progBar = document.querySelector('.progress-bar')
+      progBar = document.querySelector('.progress-bar')
+      progBar.style.width = window.localStorage.getItem("ezTasksProgressBarWidth")
 
+      var targetHue = (progBar.style.width * 100) * 1.2
+      progBar.style.backgroundColor = "hsla( " + targetHue + ", 100%, 50%, 1)";
+
+    }, 0)
+
+    setTimeout(function() {
       var setWidth = #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length};
-      progBar.style.width = '' + (setWidth * 100) + '%'
-
+      var setWidthString = '' + (setWidth * 100) + '%'
       var targetHue = (setWidth * 100) * 1.2
 
+      progBar.style.transition="width, background-color, .5s cubic-bezier(1, 0.5, 0.5, 1)";
+      progBar.style.width = setWidthString
 
-      //- console.log(setWidth)
-      //- console.log('targetHue', targetHue)
+      window.localStorage.setItem("ezTasksProgressBarWidth",  setWidthString)
       progBar.style.backgroundColor = "hsla( " + targetHue + ", 100%, 50%, 1)";
-      //- console.log('background:', progBar.style.backgroundColor)
-    }, 0)
+
+    }, 100)
 
 
   script(src="js/dropLogic.js")

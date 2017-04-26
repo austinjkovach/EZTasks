@@ -13,9 +13,9 @@ input[type="submit"] {
 }
 
 .progress-bar {
-  width: 0;
-  transition: width, background-color, .5s cubic-bezier(1, 0.5, 0.5, 1);
-  background-color: hsla(0, 50%, 50%, 1);
+  width: initial;
+  /*transition: width, background-color, .5s cubic-bezier(1, 0.5, 0.5, 1);*/
+  background-color: hsla(0, 50%, 100%, 1);
   border-radius: 20px;
   margin-left: 5px;
 }

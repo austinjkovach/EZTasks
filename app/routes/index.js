@@ -80,9 +80,9 @@ module.exports = function(app, passport) {
     // =====================================
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
-    app.get('/profile', function(req, res) {
+    app.get('/profile', isLoggedIn, function(req, res) {
 
-        taskController.getTasksByUser({id: 1}, function(tasks) {
+        taskController.getTasksByUser(req.user, function(tasks) {
 
           var completed = tasks.filter(function(task) {
             return task.completed
@@ -93,7 +93,7 @@ module.exports = function(app, passport) {
           })
 
           res.render('profile', {
-              user : {id: 1}, // get the user out of session and pass to template
+              user : req.user, // get the user out of session and pass to template
               tasks : tasks
           });
         })
@@ -173,19 +173,29 @@ module.exports = function(app, passport) {
 
       var task = taskController.findById(req.params.id, function(task) {
 
+        if(task.owner !== req.user) {
+          var redirectPath = helpers.resolveRedirectPath(req.headers)
+          res.redirect(redirectPath)
+        }
+
         res.render('edittask', { task: task })
       })
-
     })
 
     app.post('/tasks/edit/:id', function(req, res) {
       // TODO validate user permissions
-
       var id = req.params.id
       var data = helpers.dataTransformer(req.body)
 
-      taskController.editTask(id, data, function() {
-        res.redirect('back')
+      taskController.validateUserAuthorization(req.user, id, function(valid) {
+
+        if(!valid) {
+          return
+        }
+
+        taskController.editTask(id, data, function() {
+          res.redirect('back')
+        })
       })
     })
 
