@@ -23,7 +23,7 @@ module.exports = {
       if(err) {
         return console.error('error connecting SELECT', err)
       }
-      client.query("SELECT id, text, completed, day FROM tasks WHERE owner=" + id + " ORDER BY completed, createdon ASC;", function(err, result) {
+      client.query("SELECT id, text, completed, day, assigned_time FROM tasks WHERE owner=" + id + " ORDER BY completed, created_on ASC;", function(err, result) {
         if(err){
             return console.error('error running SELECT query', err);
         }
@@ -45,7 +45,7 @@ module.exports = {
     console.log('data in editTask', data)
     if(data.completed === 'true') {
       var timestamp = helpers.getTimestamp()
-      completedOnString = ", completedon='" + timestamp + "'"
+      completedOnString = ", completed_on='" + timestamp + "'"
     }
 
     if(data.day) {
@@ -144,6 +144,7 @@ module.exports = {
       })
     })
   },
+
   testFunc: function() {
     return 1;
   },
@@ -153,11 +154,28 @@ module.exports = {
       if(err) {
         return console.error('error connecting ', err)
       }
-      client.query("SELECT * FROM tasks WHERE createdon > (CURRENT_DATE - INTERVAL '7 days')::date;", function(err, result) {
+      client.query("SELECT * FROM tasks WHERE created_on > (CURRENT_DATE - INTERVAL '7 days')::date;", function(err, result) {
         if(err) {
-        return console.error('error query ', err)
+          return console.error('error query ', err)
         }
         done(err)
+        return callback(result.rows)
+      })
+    })
+  },
+
+  getTasksForWeek: function(weekStart, callback) {
+
+    // Abstract this?
+    var formattedDate = weekStart.format("YYYY-MM-DD hh:mm:ss")
+    pool.connect(function(err, client, done) {
+      if(err) {
+        return console.error('error connecting ', err)
+      }
+      client.query("SELECT * FROM tasks WHERE created_on > '" + formattedDate + "'::date AND created_on < (timestamp '" + formattedDate + "' + INTERVAL '7 days')::date;", function(err, result) {
+        if(err) {
+          return callback(null, err, weekStart, formattedDate)
+        }
         return callback(result.rows)
       })
     })

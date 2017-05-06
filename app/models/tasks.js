@@ -16,6 +16,7 @@ var Task = function(text, ownerId) {
     this.completed = false;
     this.ownerId = ownerId;
     this.createdOn = timestamp;
+    this.assignedTime = timestamp;
 
 }
 
@@ -27,7 +28,7 @@ Task.prototype.save = function(callback) {
     if(err) {
         return console.error('error CONNECTING INSERT', err);
     }
-    client.query("INSERT INTO tasks (text, owner, completed, createdon) values('" + task.text + "', " + task.ownerId + ", false, '" + task.createdOn + "')", function(err, result) {
+    client.query("INSERT INTO tasks (text, owner, completed, created_on, assigned_time) values('" + task.text + "', " + task.ownerId + ", false, '" + task.createdOn + "', '" + task.assignedTime + "');", function(err, result) {
       if(err){
           return console.error('error running INSERT query', err);
       }

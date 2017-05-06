@@ -92,9 +92,13 @@ module.exports = function(app, passport) {
             return !(task.completed)
           })
 
+          var dates = helpers.configureWeekObject(helpers.getWeek())
+          console.log('tasks:', tasks)
           res.render('profile', {
               user : req.user, // get the user out of session and pass to template
-              tasks : tasks
+              tasks : tasks,
+              dates: dates
+              // dates: [{ timestamp: moment('2017-12-25'), day: 'M' }]
           });
         })
     });
@@ -173,7 +177,7 @@ module.exports = function(app, passport) {
 
       var task = taskController.findById(req.params.id, function(task) {
 
-        if(task.owner !== req.user) {
+        if(task.owner !== req.user.id) {
           var redirectPath = helpers.resolveRedirectPath(req.headers)
           res.redirect(redirectPath)
         }

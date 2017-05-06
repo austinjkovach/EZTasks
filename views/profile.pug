@@ -18,9 +18,10 @@ block content
                   input(type="submit" value="+").btn.btn-success
     .row
       .col-xs-12
-        each day, dayIndex in ['M', 'T', 'W', 'TH', 'F', 'SAT', 'SUN']
+        each day, dayIndex in dates
           .col-sm-2.col-xs-12
-              .text-center=day
+              .text-center=day.day
+              .text-center=(day.timestamp.month() + 1) + '/' + (day.timestamp.date())
               .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)", data-column-id=dayIndex)
                 each task, index in tasks
                   if task.day === dayIndex
