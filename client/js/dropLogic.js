@@ -1,14 +1,29 @@
-var cardSuccess = document.querySelectorAll('.card-success')
-
+var cardSuccess = document.querySelectorAll('.card-button.success')
 
 for(var i=0;i<cardSuccess.length;i++) {
   cardSuccess[i].addEventListener('click', function(e) {
 
     var id = e.target.parentNode.parentNode.dataset.id
     var text = e.target.parentNode.querySelector('input:nth-child(2)').value
-    var completed = !e.target.parentNode.querySelector('input:nth-child(3)').checked
+    var completed = !e.target.parentNode.querySelector('input[name="completed"]').checked
+    var starred = e.target.parentNode.querySelector('input[name="starred"]').checked
 
-    var postData = { completed: completed, text: text }
+    var postData = { completed: completed, text: text, starred: starred }
+    post('/tasks/edit/' + id, postData)
+  })
+}
+
+var cardStarred = document.querySelectorAll('.card-button.starred')
+
+for(var i=0;i<cardStarred.length;i++) {
+  cardStarred[i].addEventListener('click', function(e) {
+    console.log('e', e)
+    var id = e.target.parentNode.parentNode.dataset.id
+    var text = e.target.parentNode.querySelector('input:nth-child(2)').value
+    var completed = e.target.parentNode.querySelector('input[name="completed"]').checked
+    var starred = !e.target.parentNode.querySelector('input[name="starred"]').checked
+
+    var postData = { completed: completed, text: text, starred: starred }
     post('/tasks/edit/' + id, postData)
   })
 }
@@ -16,7 +31,6 @@ for(var i=0;i<cardSuccess.length;i++) {
 function dragStart(e) {
 
   //==> store data-info attribute
-
   e.dataTransfer.setData("text", e.target.dataset.info)
 }
 
@@ -28,8 +42,11 @@ function dropContent(e) {
   var target = e.target
   var targetDataId = target.dataset.columnId
 
-  if(target.classList.contains('card')) {
-    target = target.parentNode
+  if(target.classList.contains('card-text')) {
+      console.log('target:', target)
+
+      target = target.parentNode.parentNode
+      console.log('POOF', target)
   }
 
   //==> Avoid adding card to things that aren't storage or columns
@@ -47,7 +64,7 @@ function dropContent(e) {
   var id = card.dataset.id
 
   var cardInputs = card.querySelectorAll('input')
-  var postData = { day: target.dataset.columnId }
+  var postData = { assigned_time: target.dataset.columnId }
 
   for( var i=0; i<cardInputs.length; i++ ) {
     var currentInput = cardInputs[i]
@@ -72,6 +89,9 @@ function dropContent(e) {
 function allowDrop(e) {
   e.preventDefault()
 }
+
+
+
 
 /*
 

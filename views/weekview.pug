@@ -1,0 +1,97 @@
+extends _partials/_layout.pug
+
+block content
+  link(rel="stylesheet" href="/css/weekview.css")
+
+  .jumbotron= user.email
+    .progress-container
+      .progress-bar
+    .tasks #{tasks.filter(function(t){return t.completed}).length} / #{tasks.length}
+
+  .container
+    .row
+      .col-xs-12.col-md-6
+        form#newTask( action="/tasks/create", method="post")
+              .input-group
+                input(type="text", placeholder="Add Task", name="text", autofocus, tabindex=1).form-control
+                span.input-group-btn(tabindex=2)
+                  input(type="submit" value="+").btn.btn-success
+      .col-xs-12.col-md-6
+          a(href="/weekview/" + prevWeek)
+            .btn.btn-primary < Prev
+          a(href="/weekview")
+            .btn.btn-primary
+              .fa.fa-home
+              span  Home
+          a(href="/weekview/" + nextWeek)
+            .btn.btn-primary Next >
+          a(href="/wakatime")
+            .btn.btn-primary Wakatime
+    .row
+      .col-xs-12
+        each day, dayIndex in dates
+          .col-sm-2.col-xs-12.day-column
+              .text-center=day.day
+              .text-center=(day.timestamp.month() + 1) + '/' + (day.timestamp.date())
+              .card-holder(ondrop="dropContent(event)", ondragover="allowDrop(event)", data-column-id=day.timestamp)
+                each task, index in tasks
+                  if task.assigned_time.isSame(day.timestamp, 'date')
+                    .card(class=(task.completed ? "complete" : ""), ondragstart="dragStart(event)", draggable="true", data-info=index, data-id=task.id)
+                      .card-text= task.text
+                        button.card-button.success &#10004;
+                        input(type="hidden", name="text", value=task.text)
+                        input(type="checkbox", name="completed", checked=task.completed, style="display:none")
+                        input(type="checkbox", name="starred", checked=task.starred, style="display:none")
+                        button.card-button.starred &#9733;
+                      a(href="/tasks/edit/" + task.id)
+                        button.card-button.info  &#9998;
+                      form(action="/tasks/delete/" + task.id, method="post")
+                        button.card-button.danger(type="submit") &#10006;
+
+  .taskDrawer
+    button.btn.drawer-btn(tabindex=3)
+    .outstanding
+      h1 Outstanding
+      each task in starredTasks
+        .card(class=(task.completed ? "complete" : ""), data-info=index, data-id=task.id)
+          .card-text= task.text
+            button.card-button.success &#10004;
+            input(type="hidden", name="text", value=task.text)
+            input(type="checkbox", name="completed", checked=task.completed, style="display:none")
+            input(type="checkbox", name="starred", checked=task.starred, style="display:none")
+            button.card-button.starred &#9733;
+          a(href="/tasks/edit/" + task.id)
+            button.card-button.info  &#9998;
+          form(action="/tasks/delete/" + task.id, method="post")
+            button.card-button.danger(type="submit") &#10006;
+
+  script.
+    var completedTasksLength = #{tasks.filter(function(t){return t.completed}).length};
+    var tasksLength = #{tasks.length};
+
+    var drawerButton = document.querySelector('.drawer-btn');
+    var taskDrawer = document.querySelector('.taskDrawer');
+
+
+
+
+    drawerButton.addEventListener('click', function(e) {
+      taskDrawer.classList.toggle('open');
+    })
+
+    document.addEventListener('keypress', function(e) {
+      console.log(e)
+      if(!e.ctrlKey || e.keyCode !== 15) {
+        return;
+      }
+      taskDrawer.classList.toggle('open');
+    })
+
+
+  script(src="/js/dropLogic.js")
+  script(src="/js/progressBar.js")
+  script(src="/js/taskDrawer.js")
+
+
+
+

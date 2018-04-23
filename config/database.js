@@ -8,7 +8,7 @@ module.exports = {
       host: 'localhost',
       port: 5432,
       max: 10,
-      idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
+      idleTimeoutMillis: 1000 // how long a client is allowed to remain idle before being closed
     }
 
 };

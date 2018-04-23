@@ -18,11 +18,13 @@ form {
   height: 34px;
   width: 62px; /*    2x 26px width, plus 10px for spacing */
 
-  margin-top: 10px;
-
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
-
+.switch {
+  margin-top: -20px;
+}
 
 .switch input {
   display:none;

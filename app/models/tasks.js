@@ -1,12 +1,13 @@
-var pg = require('pg')
-var configDB = require('../../config/database.js')
-var connectionString = configDB.url
+// var pg = require('pg')
+// var configDB = require('../../config/database.js')
+// var connectionString = configDB.url
 
-var client = new pg.Client(connectionString)
+// var client = new pg.Client(connectionString)
 var helpers = require('../helpers/helpers.js')
 
-var poolConfig = configDB.poolConfig
-var pool = new pg.Pool(poolConfig)
+// var poolConfig = configDB.poolConfig
+// var pool = new pg.Pool(poolConfig)
+var pool = require('../../config/pgPool');
 
 var Task = function(text, ownerId) {
 
@@ -17,37 +18,49 @@ var Task = function(text, ownerId) {
     this.ownerId = ownerId;
     this.createdOn = timestamp;
     this.assignedTime = timestamp;
-
 }
 
-Task.prototype.save = function(callback) {
-
+Task.prototype.save = function(callback, index) {
   var task = this;
 
-    pool.connect(function(err, client, done) {
+  pool.connect(function(err, client, done) {
     if(err) {
-        return console.error('error CONNECTING INSERT', err);
+      return done(err);
     }
-    client.query("INSERT INTO tasks (text, owner, completed, created_on, assigned_time) values('" + task.text + "', " + task.ownerId + ", false, '" + task.createdOn + "', '" + task.assignedTime + "');", function(err, result) {
-      if(err){
-          return console.error('error running INSERT query', err);
-      }
 
+    client.query(
+      `INSERT INTO tasks (
+        text,
+        owner,
+        completed,
+        created_on,
+        assigned_time)
+      values(
+        '${task.text}',
+        ${task.ownerId},
+        false,
+        '${task.createdOn}',
+        '${task.assignedTime}');`
+      ,function(err, result) {
+      if(err){
+        return console.error('error running INSERT query', err);
+      }
       done(err)
-      return callback();
+      return callback(index);
     })
   })
 
-  pool.on('error', function(err, client) {
-    // if an error is encountered by a client while it sits idle in the pool
-     // the pool itself will emit an error event with both the error and
-     // the client which emitted the original error
-     // this is a rare occurrence but can happen if there is a network partition
-     // between your application and the database, the database restarts, etc.
-     // and so you might want to handle it and at least log it out
-     console.error('idle client error', err.message, err.stack)
-  })
 }
+
+pool.on('error', function(err, client) {
+  // if an error is encountered by a client while it sits idle in the pool
+   // the pool itself will emit an error event with both the error and
+   // the client which emitted the original error
+   // this is a rare occurrence but can happen if there is a network partition
+   // between your application and the database, the database restarts, etc.
+   // and so you might want to handle it and at least log it out
+   // console.error('idle client error', err.message, err.stack)
+})
 
 // Task.edit = function(id, data, callback) {
 //   var completionString = ''

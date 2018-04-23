@@ -1,0 +1,218 @@
+input[type="submit"] {
+  width: 200px;
+}
+
+.jumbotron {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.container {
+  position: relative;
+}
+.btn {
+  background-color: #3399ff;
+}
+
+.btn-success {
+  background-color: #48D09B;
+}
+
+.btn-success:hover {
+  background-color: #339966;
+}
+
+/* progress bar */
+.progress-container {
+  position: relative;
+  max-width: 100%;
+  height: 20px;
+  padding: 3px 5px;
+  background-color: gray;
+
+  border-radius: 20px;
+}
+
+.progress-bar {
+  width: initial;
+  /* transition: width, background-color, .5s cubic-bezier(1, 0.5, 0.5, 1); */
+  background-color: hsla(0, 50%, 100%, 1);
+  border-radius: 20px;
+}
+
+.prog-division {
+  position: absolute;
+  border-right: 5px solid #000;
+  margin-right: 20%;
+}
+
+/* card holders */
+
+.day-column {
+  border-radius: 4px;
+}
+
+@media(min-width: 768px) {
+  .day-column {
+    width: 13.75%;
+    padding: 0;
+    border: 1px solid #000;
+    margin: 3px;
+  }
+}
+
+.card-holder {
+  height: 450px;
+  background: #66ccff;
+  overflow: auto;
+}
+
+
+/* cards */
+.card {
+  display: inline-block;
+  position: relative;
+  cursor: move;
+
+  height: 90px;
+  width: 100%;
+
+  border: 1px solid #666;
+  background-color: gray;
+
+  color: white;
+  text-align: center;
+}
+
+.card-text {
+  line-height: 78px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.card.complete {
+  background-color: #48D09B;
+}
+
+.card-button {
+  position: absolute;
+  bottom: 7px;
+  line-height: 0px;
+
+  height: 20px;
+  width: 20px;
+
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+
+  color: white;
+  box-shadow: 1px 1px 3px black;
+}
+
+.card-button.success {
+  left: 7px;
+  background: #48D09B;
+}
+
+.card-button.success:hover, .card-button.success:focus {
+  background: #339966;
+  outline: none;
+}
+
+.card-button.starred {
+  left: calc(50% - 28px);
+  background: yellow;
+}
+
+.card-button.starred:hover, .card-button.starred:focus {
+  background: #339966;
+  outline: none;
+}
+
+.card-button.danger {
+  right: 7px;
+  background: #ff5050;
+}
+
+.card-button.danger:hover, .card-button.danger:focus {
+  background: #ee0000;
+  outline: none;
+}
+
+.card-button.info {
+  background: #3399ff;
+  left: calc(50% + 10px);
+}
+
+.card-button.info:hover, .card-button.info:focus {
+  background: #3276b1;
+  outline: none;
+}
+
+.card-button.info a {
+  color: white;
+  height: 100%;
+  line-height: 16px;
+  text-decoration: none;
+}
+
+/* taskDrawer */
+.taskDrawer {
+  position: absolute;
+  left: 10px;
+  top: 135px;
+
+  width: 250px;
+  background: #66ccff;
+  padding-bottom: 50px;
+
+  transition: transform 500ms;
+  transform: translateX(-265px);
+  box-shadow: 3px 3px 10px 0px;
+  border-radius: 4px;
+}
+
+.taskDrawer h1 {
+  font-size: 24px;
+  text-align: center;
+  color: #eee;
+}
+
+.taskDrawer.open {
+  transform: translateX(0);
+}
+
+.drawer-btn {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+
+  transition: transform 500ms, height 500ms, width 500ms;
+  transform: translate(70px, -20px);
+
+  padding: 0;
+  width: 50px;
+  height: 50px;
+  background-color: #66ccff;
+  border-radius: 30px;
+  box-shadow: 2px 2px 5px;
+}
+
+.taskDrawer.open .drawer-btn {
+  background-color: #ff5050;
+  height: 20px;
+  width: 20px;
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 3px;
+}
+
+.taskDrawer.open .drawer-btn:hover {
+  background-color: #ee0000;
+}
+
+
+.drawer-btn:focus, .drawer-btn:hover {
+  background-color: #3399ff;
+  outline: none;
+}

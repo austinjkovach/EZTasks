@@ -1,6 +1,7 @@
 var pg = require('pg')
 var configDB = require('../../config/database.js')
 var connectionString = configDB.url
+var pool = require('../../config/pgPool');
 
 var client = new pg.Client(connectionString)
 
@@ -121,6 +122,33 @@ User.findById = function(id, callback){
     })
   })
 };
+
+User.addWakatimeToken = function(profile, token, callback) {
+  var response;
+  pool.connect(function(err, client, done) {
+    if(err) {
+        return console.error('error running query', err);
+    }
+
+    var query = "UPDATE users SET wakatimetoken = '" + token + "' WHERE id = '" + profile.id + "';"
+    client.query(query, function(err, result) {
+      if(err) {
+        console.error('error inserting:', err)
+      }
+
+      client.query("SELECT * FROM users WHERE id = '" + profile.id + "';", function(err, result) {
+        console.log('select result:', result);
+
+        response = result;
+        console.log('result:', result.rows[0])
+        done(err);
+        return callback(result.rows[0])
+      })
+      done(err);
+    })
+
+  })
+}
 
 //User.connect = function(callback){
 //    return callback (false);

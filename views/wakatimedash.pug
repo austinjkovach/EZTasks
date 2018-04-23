@@ -1,0 +1,7 @@
+extends _partials/_layout.pug
+
+block content
+  .container
+    each day in data
+      .info= day.sum || 0
+    a(href="/api/public/wakatime/duration/day").btn.btn-primary Update Data

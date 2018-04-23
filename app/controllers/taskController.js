@@ -1,14 +1,10 @@
+// var pg = require('pg')
+// var connectionString = configDB.url
+// // var client = new pg.Client(connectionString)
 var taskModel = require('../models/tasks.js')
-
-var pg = require('pg')
-var configDB = require('../../config/database.js')
-var connectionString = configDB.url
-
-var client = new pg.Client(connectionString)
 var helpers = require('../helpers/helpers.js')
-
-var poolConfig = configDB.poolConfig
-var pool = new pg.Pool(poolConfig)
+var pool = require('../../config/pgPool')
+var moment = require('moment')
 
 module.exports = {
 
@@ -23,7 +19,13 @@ module.exports = {
       if(err) {
         return console.error('error connecting SELECT', err)
       }
-      client.query("SELECT id, text, completed, day, assigned_time FROM tasks WHERE owner=" + id + " ORDER BY completed, created_on ASC;", function(err, result) {
+
+      var query =  `SELECT id, text, completed, day, created_on, assigned_time, starred
+                    FROM tasks
+                    WHERE owner=${id}
+                    ORDER BY completed, created_on ASC;`
+
+      client.query(query, function(err, result) {
         if(err){
             return console.error('error running SELECT query', err);
         }
@@ -38,9 +40,11 @@ module.exports = {
   editTask: function(id, data, callback) {
 
     // var textString = ''
-    var completedString = ''
-    var completedOnString = ''
-    var dayString = ''
+    var completedString = '';
+    var completedOnString = '';
+    var dayString = '';
+    var dateString = '';
+    var starredString = '';
 
     console.log('data in editTask', data)
     if(data.completed === 'true') {
@@ -48,8 +52,11 @@ module.exports = {
       completedOnString = ", completed_on='" + timestamp + "'"
     }
 
-    if(data.day) {
-      dayString = ", day=" + data.day
+    if(data.assigned_time) {
+
+      var formattedDayTimestamp = helpers.formatDate(data.assigned_time);
+
+      dayString = ", assigned_time='" + formattedDayTimestamp + "'"
     }
 
     pool.connect(function(err, client, done) {
@@ -57,30 +64,16 @@ module.exports = {
         return console.error('error CONNECTING UPDATE', err)
       }
 
-      client.query("UPDATE tasks SET text='" + data.text + "', completed=" + data.completed + dayString + completedOnString + " WHERE id=" + id + ";", function(err, result) {
+      var query =  `UPDATE tasks
+                    SET text='${helpers.validateTextInput(data.text)}', completed=${data.completed}, starred=${data.starred}${dayString}${completedOnString}
+                    WHERE id=${id};`
+
+      console.log("UPDATE query:", query)
+
+      client.query(query, function(err, result) {
         if(err) {
           return console.error('error running UPDATE', err)
         }
-        done(err)
-        return callback();
-      })
-    })
-  },
-
-  changeDay:function(id, data, callback) {
-
-    var day = data.day
-
-    pool.connect(function(err, client, done) {
-      if(err) {
-        return console.error('error CONNECTING UPDATE', err)
-      }
-
-      client.query("UPDATE tasks SET day='" + data.day + "' WHERE id=" + id + ";", function(err, result) {
-        if(err) {
-          return console.error('error running UPDATE', err)
-        }
-
         done(err)
         return callback();
       })
@@ -109,8 +102,10 @@ module.exports = {
       if(err) {
         return console.error('error connecting AUTH SELECT', err)
       }
-
-      client.query("SELECT owner FROM tasks WHERE id=" + taskId + ";", function(err, result) {
+      var query = `SELECT owner
+                   FROM tasks
+                   WHERE id=${taskId};`
+      client.query(query, function(err, result) {
         if(err) {
           return console.error('error running SELECT query', err)
         }
@@ -118,9 +113,6 @@ module.exports = {
         done(err)
 
         var validationResults = result.rows[0].owner === user.id
-
-        console.log('results owner:', result.rows, 'user', user)
-        console.log('validation Results:', validationResults)
 
         return callback(validationResults)
       })
@@ -154,7 +146,12 @@ module.exports = {
       if(err) {
         return console.error('error connecting ', err)
       }
-      client.query("SELECT * FROM tasks WHERE created_on > (CURRENT_DATE - INTERVAL '7 days')::date;", function(err, result) {
+
+      var query =  `SELECT *
+                    FROM tasks
+                    WHERE created_on > (CURRENT_DATE - INTERVAL '7 days')::date;`
+
+      client.query(query, function(err, result) {
         if(err) {
           return console.error('error query ', err)
         }
@@ -164,20 +161,52 @@ module.exports = {
     })
   },
 
-  getTasksForWeek: function(weekStart, callback) {
+  getTasksForWeek: function(user, weekStart, callback) {
 
     // Abstract this?
-    var formattedDate = weekStart.format("YYYY-MM-DD hh:mm:ss")
+    var formattedDate = weekStart.format("YYYY-MM-DD hh:mm:ss");
+    var query =`SELECT *
+                      FROM tasks
+                      WHERE owner=${user.id}
+                      AND assigned_time >= '${formattedDate}'::date
+                      AND assigned_time < (timestamp '${formattedDate}' + INTERVAL '7 days')::date
+                      ORDER BY completed;`
+
     pool.connect(function(err, client, done) {
       if(err) {
         return console.error('error connecting ', err)
       }
-      client.query("SELECT * FROM tasks WHERE created_on > '" + formattedDate + "'::date AND created_on < (timestamp '" + formattedDate + "' + INTERVAL '7 days')::date;", function(err, result) {
+
+      client.query(query, function(err, result) {
         if(err) {
           return callback(null, err, weekStart, formattedDate)
         }
         return callback(result.rows)
       })
+
+      done()
+    })
+  },
+  getStarredTasksForUser: function(user, callback) {
+    var query =  `SELECT *
+                  FROM tasks
+                  WHERE owner=${user.id}
+                  AND completed=false
+                  AND starred=true;`
+
+    pool.connect(function(err, client, done) {
+      if(err) {
+        return console.error('error connecting ', err)
+      }
+
+      client.query(query, function(err, result) {
+        if(err) {
+          return callback(null, err)
+        }
+        return callback(result.rows)
+      })
+
+      done()
     })
   }
 }

@@ -92,71 +92,118 @@ module.exports = function(passport) {
 
     }));
 
-// =========================================================================
-// GOOGLE LOGIN ============================================================
-// =========================================================================
+  // =========================================================================
+  // GOOGLE LOGIN ============================================================
+  // =========================================================================
 
-passport.use(new GoogleStrategy({
-    clientID: configAuth.googleAuth.clientID,
-    clientSecret: configAuth.googleAuth.clientSecret,
-    callbackURL: configAuth.googleAuth.callbackURL,
-    passReqToCallback: true
-  },
-  function(req, token, tokenSecret, profile, done) {
-
-    process.nextTick(function() {
-
-        User.findOrCreate(profile._json, token, function (err, user) {
-
-          if(err) {
-            return done(err)
-          }
-
-          if(!user) {
-            console.log('no user found!')
-          }
-
-          return done(null, user);
-
-        });
-    })
-  }
-));
-
-    // =========================================================================
-    // LOCAL LOGIN =============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
-
-    passport.use('local-login', new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
-        usernameField : 'email',
-        passwordField : 'password',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
+  passport.use(new GoogleStrategy({
+      clientID: configAuth.googleAuth.clientID,
+      clientSecret: configAuth.googleAuth.clientSecret,
+      callbackURL: configAuth.googleAuth.callbackURL,
+      passReqToCallback: true
     },
-    function(req, email, password, done) { // callback with email and password from our form
+    function(req, token, tokenSecret, profile, done) {
 
-        // find a user whose email is the same as the forms email
-        // we are checking to see if the user trying to login already exists
-        User.findOne({ 'local.email' :  email }, function(err, user) {
-            // if there are any errors, return the error before anything else
-            if (err)
-                return done(err);
+      process.nextTick(function() {
 
-            // if no user is found, return the message
-            if (!user)
-                return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+          User.findOrCreate(profile._json, token, function (err, user) {
 
-            // if the user is found but the password is wrong
-            if (!user.validPassword(password))
-                return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+            if(err) {
+              return done(err)
+            }
 
-            // all is well, return successful user
+            if(!user) {
+              console.log('no user found!')
+            }
+
             return done(null, user);
-        });
 
+          });
+      })
+    }
+  ));
+
+  // =========================================================================
+  // LOCAL LOGIN =============================================================
+  // =========================================================================
+  // we are using named strategies since we have one for login and one for signup
+  // by default, if there was no name, it would just be called 'local'
+
+  passport.use('local-login', new LocalStrategy({
+      // by default, local strategy uses username and password, we will override with email
+      usernameField : 'email',
+      passwordField : 'password',
+      passReqToCallback : true // allows us to pass back the entire request to the callback
+  },
+  function(req, email, password, done) { // callback with email and password from our form
+
+      // find a user whose email is the same as the forms email
+      // we are checking to see if the user trying to login already exists
+      User.findOne({ 'local.email' :  email }, function(err, user) {
+          // if there are any errors, return the error before anything else
+          if (err)
+              return done(err);
+
+          // if no user is found, return the message
+          if (!user)
+              return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+
+          // if the user is found but the password is wrong
+          if (!user.validPassword(password))
+              return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+
+          // all is well, return successful user
+          return done(null, user);
+      });
+
+  }));
+
+  // =========================================================================
+  // WAKATIME AUTH ===========================================================
+  // =========================================================================
+
+
+    passport.use('wakatime', new OAuth2Strategy({
+        authorizationURL: 'https://www.wakatime.com/oauth/authorize',
+        tokenURL: 'https://www.wakatime.com/oauth/access_token',
+        clientID: configAuth.wakatimeAuth.clientID,
+        clientSecret: configAuth.wakatimeAuth.clientSecret,
+        callbackURL     : configAuth.wakatimeAuth.callbackURL,
+        passReqToCallback : true,
+        scope: 'read_logged_time'
+
+      },
+      function(req, accessToken, refreshToken, profile, done) {
+
+        // make the code asynchronous
+        // User.findOne won't fire until we have all our data back from Google
+        var user = req.user;
+
+
+        process.nextTick(function() {
+
+          console.log('req.user', req.user);
+          console.log("user code", req.query.code)
+
+              if(req.user) {
+                // TODO SAVE WAKATIME TOKEN IN DB
+
+                // user.save(function(err) {
+                //   if(err) {
+                //     throw err;
+                //   }
+                //   return done(null, user);
+                // })
+                User.addWakatimeToken(req.user, req.query.code, function() {
+                  return done(null, user);
+                })
+              }
+              else {
+                // TODO WHAT GOES HERE?
+              }
+          })
+          return done(null, user);
     }));
 
 
-  };
+};

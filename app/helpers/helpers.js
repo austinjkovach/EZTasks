@@ -2,6 +2,9 @@ var moment = require('moment')
 
 helperFunctions = {
   getTimestamp: getTimestamp,
+  getDatestamp: getDatestamp,
+  formatDate: formatDate,
+  formatMoment: formatMoment,
   transformCheckboxData: transformCheckboxData,
   resolveRedirectPath: resolveRedirectPath,
   validateTextInput: validateTextInput,
@@ -9,7 +12,9 @@ helperFunctions = {
   getWeekStartEnd: getWeekStartEnd,
   getWeekStart: getWeekStart,
   getWeek: getWeek,
-  configureWeekObject: configureWeekObject
+  configureWeekObject: configureWeekObject,
+  convertAssignedTime: convertAssignedTime,
+  convertHTMLCodeToSingleQuotes: convertHTMLCodeToSingleQuotes,
 }
 
 function getTimestamp() {
@@ -17,11 +22,31 @@ function getTimestamp() {
   return moment().format("YYYY-MM-DD HH:mm:ss");
 }
 
+function getDatestamp(mmnt) {
+  return mmnt ? mmnt.format("YYYY-MM-DD") : moment().format("YYYY-MM-DD")
+}
+
+function formatMoment(timestamp) {
+  return timestamp ? moment(timestamp) : moment();
+}
+
+function formatDate(date) {
+  var md = moment(date)
+  return md.format("YYYY-MM-DD HH:mm:ss");
+}
+
+// function transformCheckboxData(data) {
+//   if(data.completed === undefined) {
+//     return false
+//   }
+//   return data.completed === "on" || data.completed
+// }
+
 function transformCheckboxData(data) {
-  if(data.completed === undefined) {
-    return false
+  if(data === undefined) {
+    return false;
   }
-  return data.completed === "on" || data.completed
+  return data === "on" || data
 }
 
 function resolveRedirectPath(headers) {
@@ -32,8 +57,8 @@ function resolveRedirectPath(headers) {
     return console.error('No referer')
   }
 
-  if(referer !== 'http://localhost:4000/profile') {
-    return "/profile"
+  if(referer !== 'http://localhost:4000/weekview') {
+    return "/weekview"
   }
   else {
     return "back"
@@ -48,6 +73,8 @@ function validateTextInput(text, callback) {
       return callback(false, "Test")
     }
     else {
+
+      text = text.replace(`'`, `&#39;`);
       return callback(false, text);
     }
   }
@@ -56,7 +83,8 @@ function validateTextInput(text, callback) {
      return "Test"
     }
     else {
-     return text;
+      text = text.replace(`'`, `&#39;`);
+      return text;
     }
   }
 
@@ -70,7 +98,8 @@ function dataTransformer(obj) {
     output[key] = obj[key]
   })
 
-  output.completed = this.transformCheckboxData(output)
+  output.completed = this.transformCheckboxData(output.completed)
+  output.starred = this.transformCheckboxData(output.starred)
   output.text = this.validateTextInput(output.text)
 
   return output
@@ -84,23 +113,17 @@ function getWeekStartEnd() {
   return { start: weekStart, end: weekEnd }
 }
 
-function getWeekStart(num) {
+function getWeekStart(mmnt) {
   // TODO add arguments in order to specify week
-  // Are arguments in moment() format or integers? (weeks from today)
-
-  var now = moment().add(num, 'weeks')
-  var weekStart = moment(now).startOf('week')
-
-  return weekStart
+  // Are arguments in mmnt() format or integers? (weeks from today)
+  return moment(mmnt.startOf('week'))
 }
 
-function getWeek(mmnt, offset) {
+function getWeek(mmnt) {
 
-  offset = offset || 0
   mmnt = mmnt || moment()
   var outputArray = [];
-  var weekStart = getWeekStart(offset)
-
+  var weekStart = getWeekStart(mmnt)
 
   for(var i=0;i<7;i++) {
     outputArray.push(moment(weekStart).add(i, 'days'))
@@ -126,11 +149,26 @@ function configureWeekObject(weekArray) {
     return {
       timestamp: day,
       mmdd: month + '/' + date,
-      day: dayName[i]
+      day: dayName[i],
+      unix: moment.unix(day),
     };
   })
 }
 
+function convertAssignedTime(tasks) {
+  return tasks.map(function(task) {
+
+    task.assigned_time = moment(task.assigned_time)
+    return task;
+  })
+}
+
+function convertHTMLCodeToSingleQuotes(tasks) {
+  return tasks.map((task) => {
+    task.text = task.text.replace(`&#39;`, `'`)
+    return task;
+  })
+}
   /*
 
     functions to add or subtract 1 week from moment
@@ -141,7 +179,7 @@ function configureWeekObject(weekArray) {
     2.DONE Find all days within 1 week of (1)
     3.DONE Find all tasks with create date within (2)
     4.DONE Apply dates to view
-    5. Add 'date assigned' value to tasks
+    5.DONE Add 'date assigned' value to tasks
     6. Update (3) to find all tasks with assigned date within (2)
 
   */
