@@ -16,6 +16,15 @@ module.exports = function(app, passport) {
     app.use(express.static('client'))
 
     // =====================================
+    // REACT ===============================
+    // =====================================
+    app.get('/react', function(req, res) {
+      res.sendFile('index.html')
+    })
+
+
+
+    // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
     app.get('/', isLoggedIn, function(req, res) {

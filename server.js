@@ -20,7 +20,7 @@ require('./config/passport')(passport); // pass passport for configuration
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser()); // get information from html forms
 
-app.set('view engine', 'pug');
+// app.set('view engine', 'pug');
 
 // required for passport
 app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
@@ -32,7 +32,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 app.use(express.static(__dirname + '/client'))
 
 // routes ======================================================================
-require('./app/routes/index.js')(app, passport); // load our routes and pass in our app and fully configured passport
+// require('./app/routes/index.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 app.listen(port);
