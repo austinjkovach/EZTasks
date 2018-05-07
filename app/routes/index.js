@@ -10,7 +10,12 @@ var wakatimeController = require('../controllers/wakatimeController.js')
 var taskController = require('../controllers/taskController.js')
 var express = require('express')
 
+// => https://expressjs.com/en/guide/routing.html
+let react = require('./react');
+
 module.exports = function(app, passport) {
+
+    let authRoutes = require('./auth')(passport);
 
     var lastTimestamp = '';
     app.use(express.static('client'))
@@ -18,11 +23,7 @@ module.exports = function(app, passport) {
     // =====================================
     // REACT ===============================
     // =====================================
-    app.get('/react', function(req, res) {
-      res.sendFile('index.html')
-    })
-
-
+    app.use('/react', react)
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -53,15 +54,17 @@ module.exports = function(app, passport) {
     // GOOGLE ==============================
     // =====================================
 
-    // THIS IS FROM SCOTCH
-    app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+    app.use('/auth', authRoutes);
 
-    app.get('/auth/google/callback',
-        passport.authenticate('google', {
-            successRedirect : '/weekview',
-            failureRedirect : '/'
-        })
-    );
+    // // THIS IS FROM SCOTCH
+    // app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+    // app.get('/auth/google/callback',
+    //     passport.authenticate('google', {
+    //         successRedirect : '/weekview',
+    //         failureRedirect : '/'
+    //     })
+    // );
 
     // THIS IS FROM DOCS
     // app.get('/auth/google',
@@ -118,7 +121,6 @@ module.exports = function(app, passport) {
       5. accumulate durations for one week by table by user and date
 
     */
-
 
     // PLACEHOLDER TO INSERT TEST DURATIONS INTO DB
     app.get('/api/wakatime/duration', function(req, res) {
@@ -179,14 +181,14 @@ module.exports = function(app, passport) {
       })
     });
 
-    app.get('/auth/wakatime', passport.authenticate('wakatime'));
+    // app.get('/auth/wakatime', passport.authenticate('wakatime'));
 
-    app.get('/auth/wakatime/callback',
-        passport.authenticate('wakatime', {
-            successRedirect : '/',
-            failureRedirect : '/'
-        })
-    );
+    // app.get('/auth/wakatime/callback',
+    //     passport.authenticate('wakatime', {
+    //         successRedirect : '/',
+    //         failureRedirect : '/'
+    //     })
+    // );
 
 
       // res.redirect('/');

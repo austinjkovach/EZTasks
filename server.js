@@ -30,9 +30,10 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 // app.use(express.static(__dirname + '/views'))
 
 app.use(express.static(__dirname + '/client'))
+app.use(express.static(__dirname + '/dist'))
 
 // routes ======================================================================
-// require('./app/routes/index.js')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./app/routes/index.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 app.listen(port);
