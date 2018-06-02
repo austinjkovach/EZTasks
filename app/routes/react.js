@@ -1,5 +1,3 @@
-
-
 let express = require('express');
 let react = express.Router();
 
@@ -13,12 +11,11 @@ react.use(function timeLog (req, res, next) {
 })
 // define the home page route
 react.get('/', function (req, res) {
-  console.log('req user', req.user)
-  res.send('Birds home page')
+  res.send(req.user.email)
 })
 // define the about route
 react.get('/about', function (req, res) {
-  res.send('About birds')
+  res.send('About React')
 })
 
 react.get('/data', function(req, res) {

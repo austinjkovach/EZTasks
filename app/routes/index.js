@@ -12,6 +12,7 @@ var express = require('express')
 
 // => https://expressjs.com/en/guide/routing.html
 let react = require('./react');
+let api = require('./api');
 
 module.exports = function(app, passport) {
 
@@ -24,6 +25,11 @@ module.exports = function(app, passport) {
     // REACT ===============================
     // =====================================
     app.use('/react', react)
+
+    // =====================================
+    // API =================================
+    // =====================================
+    app.use('/api', api)
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -56,27 +62,6 @@ module.exports = function(app, passport) {
 
     app.use('/auth', authRoutes);
 
-    // // THIS IS FROM SCOTCH
-    // app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
-
-    // app.get('/auth/google/callback',
-    //     passport.authenticate('google', {
-    //         successRedirect : '/weekview',
-    //         failureRedirect : '/'
-    //     })
-    // );
-
-    // THIS IS FROM DOCS
-    // app.get('/auth/google',
-    //   passport.authenticate('google', { scope: 'email' });
-
-    // app.get('/auth/google/callback',
-    //   passport.authenticate('google', { failureRedirect: '/login' }),
-    //   function(req, res) {
-    //     res.redirect('/');
-    //   });
-
-
     // =====================================
     // SIGNUP ==============================
     // =====================================
@@ -103,7 +88,6 @@ module.exports = function(app, passport) {
       TODO: WHY IS WAKATIME DURATION DATA GETTING POSTED TO DB TWICE?
        WE'RE HITTING ENDPOINT TWICE - WHY?
 
-
       user_id - int
       project_name - varchar(100)
       duration - int
@@ -123,55 +107,55 @@ module.exports = function(app, passport) {
     */
 
     // PLACEHOLDER TO INSERT TEST DURATIONS INTO DB
-    app.get('/api/wakatime/duration', function(req, res) {
-      wakatimeController.insertOrUpdateDuration(req.user, { project: "test project", duration: 5 }, function(results) {
-        res.redirect('/wakatime');
-      })
-    })
+    // app.get('/api/wakatime/duration', function(req, res) {
+    //   wakatimeController.insertOrUpdateDuration(req.user, { project: "test project", duration: 5 }, function(results) {
+    //     res.redirect('/wakatime');
+    //   })
+    // })
 
-    // PLACEHOLDER TO INSERT REAL DURATIONS FROM PUBLIC WAKATIME API
-    app.get('/api/public/wakatime/duration/day', function(req, res) {
-      let date = helpers.getDatestamp()
-      let url = wakatimeService.composeUrl('durations', {date: date});
+    // // PLACEHOLDER TO INSERT REAL DURATIONS FROM PUBLIC WAKATIME API
+    // app.get('/api/public/wakatime/duration/day', function(req, res) {
+    //   let date = helpers.getDatestamp()
+    //   let url = wakatimeService.composeUrl('durations', {date: date});
 
-      rp(url)
-        .then(function(result) {
-          console.log('promise result:', result)
-          let parsedBody = JSON.parse(result)
-          let timeData = parsedBody.data.reduce((total, current) => (total += current.duration), 0);
+    //   rp(url)
+    //     .then(function(result) {
+    //       console.log('promise result:', result)
+    //       let parsedBody = JSON.parse(result)
+    //       let timeData = parsedBody.data.reduce((total, current) => (total += current.duration), 0);
 
-          return timeData
-        })
-        .then(function(timeData) {
-          wakatimeController.insertOrUpdateDuration(req.user, {project: 'All projects', duration: timeData}, function(results) {
-            res.redirect('/wakatime');
-          })
-        })
+    //       return timeData
+    //     })
+    //     .then(function(timeData) {
+    //       wakatimeController.insertOrUpdateDuration(req.user, {project: 'All projects', duration: timeData}, function(results) {
+    //         res.redirect('/wakatime');
+    //       })
+    //     })
 
-      // request(url, parseWakatimeData)
+    //   // request(url, parseWakatimeData)
 
-      function parseWakatimeData(err, response, body) {
-        let parsedBody = JSON.parse(body)
-        let timeData = parsedBody.data.reduce((total, current) => (total += current.duration), 0);
+    //   function parseWakatimeData(err, response, body) {
+    //     let parsedBody = JSON.parse(body)
+    //     let timeData = parsedBody.data.reduce((total, current) => (total += current.duration), 0);
 
-        // wakatimeController.getTotalDurationByDay(req.user, helpers.getDatestamp(), function(result) {
-        // })
+    //     // wakatimeController.getTotalDurationByDay(req.user, helpers.getDatestamp(), function(result) {
+    //     // })
 
-        wakatimeController.insertOrUpdateDuration(req.user, {project: 'All projects', duration: timeData}, function(results) {
-          res.redirect('/wakatime');
-        })
-      }
-    })
+    //     wakatimeController.insertOrUpdateDuration(req.user, {project: 'All projects', duration: timeData}, function(results) {
+    //       res.redirect('/wakatime');
+    //     })
+    //   }
+    // })
 
-    app.get('/api/wakatime/public/duration/week', function(req, res) {
-      let date = helpers.getDatestamp();
-      let urlsArray = [];
+    // app.get('/api/wakatime/public/duration/week', function(req, res) {
+    //   let date = helpers.getDatestamp();
+    //   let urlsArray = [];
 
-      let now = moment().format('YYYY-MM-DD');
+    //   let now = moment().format('YYYY-MM-DD');
 
-      console.log('now', now)
+    //   console.log('now', now)
 
-    })
+    // })
 
 
     app.get('/wakatime', isLoggedIn, function(req, res) {
