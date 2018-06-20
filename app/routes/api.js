@@ -12,80 +12,6 @@ const pool = require('../../config/pgPool');
 
 let taskController = require('../controllers/taskController.js')
 
-
-let getAllTasksByUserId = function(id, callback) {
-
-  pool.connect(function(err, client, done) {
-    if(err) {
-      return console.error('error connecting SELECT', err)
-    }
-
-    var query =  `SELECT id, text, completed, day, created_on, assigned_time, starred
-                  FROM tasks
-                  WHERE owner=${id}
-                  ORDER BY assigned_time`
-
-    client.query(query, function(err, result) {
-      if(err){
-          return console.error('error running SELECT query', err);
-      }
-
-      done(err)
-      return callback(result.rows);
-
-    })
-  })
-}
-
-let getTasksById = (id, callback) => {
-
-  pool.connect(function(err, client, done) {
-    if(err) {
-      return console.error('error connecting SELECT', err)
-    }
-
-    var query =  `SELECT id, text, completed, day, created_on, assigned_time, starred
-                  FROM tasks
-                  WHERE id=${id}`
-
-    client.query(query, function(err, result) {
-      if(err){
-          return console.error('error running SELECT query', err);
-      }
-
-      done(err)
-      return callback(result.rows);
-
-    })
-  })
-}
-
-let getAllUserTasksOnDay = (start, end, callback) => {
-  // TODO stop hard-coding this
-  let id = 1;
-  pool.connect(function(err, client, done) {
-    if(err) {
-      return console.error('error connecting SELECT', err)
-    }
-
-    var query =  `SELECT id, text, completed, day, created_on, assigned_time, starred
-                  FROM tasks
-                  WHERE owner=${id}
-                  AND EXTRACT(EPOCH FROM assigned_time) BETWEEN '${start}' AND '${end}'
-                  ORDER BY assigned_time`
-
-    client.query(query, function(err, result) {
-      if(err){
-          return console.error('error running SELECT query', err);
-      }
-
-      done(err)
-      return callback(result.rows);
-
-    })
-  })
-}
-
 // USE THIS TO CONVERT TO UNIX TIMESTAMP
 // select extract(epoch from assigned_time) from tasks
 
@@ -96,17 +22,92 @@ let getAllUserTasksOnDay = (start, end, callback) => {
 //   next()
 // })
 
-api.get('/tasks/', function (req, res) {
+api.get('/tasks', function (req, res) {
   let tasks = getAllUserTasksOnDay(req.query.start, req.query.end, (response) => {
       console.log('response', response)
       res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify({data: response}));
+      res.write(JSON.stringify(response));
 
       // Don't forget to call res.end() if you aren't rendering anything (ex returning JSON)
       res.end();
     })
 })
 
+function getAllTasksByUserId(id, callback) {
+
+  pool.connect(function(err, client, done) {
+    if(err) {
+      return console.error('error connecting SELECT', err)
+    }
+
+    const query = `
+    SELECT id, text, completed, day, created_on, assigned_time, starred
+    FROM tasks
+    WHERE owner=${id}
+    ORDER BY assigned_time`
+
+    client.query(query, function(err, result) {
+      if(err){
+          return console.error('error running SELECT query', err);
+      }
+
+      done(err)
+      return callback(result.rows);
+
+    })
+  })
+}
+
+function getTasksById(id, callback) {
+
+  pool.connect(function(err, client, done) {
+    if(err) {
+      return console.error('error connecting SELECT', err)
+    }
+
+    const query = `
+    SELECT id, text, completed, day, created_on, assigned_time, starred
+    FROM tasks
+    WHERE id=${id}`
+
+    client.query(query, function(err, result) {
+      if(err){
+          return console.error('error running SELECT query', err);
+      }
+
+      done(err)
+      return callback(result.rows);
+
+    })
+  })
+}
+
+function getAllUserTasksOnDay(start, end, callback) {
+  // TODO stop hard-coding this
+  let id = 1;
+  pool.connect(function(err, client, done) {
+    if(err) {
+      return console.error('error connecting SELECT', err)
+    }
+
+    const query = `
+    SELECT id, text, completed, day, created_on, assigned_time, starred
+    FROM tasks
+    WHERE owner=${id}
+    AND EXTRACT(EPOCH FROM assigned_time) BETWEEN '${start}' AND '${end}'
+    ORDER BY assigned_time`
+
+    client.query(query, function(err, result) {
+      if(err){
+        return console.error('error running SELECT query', err);
+      }
+
+      done(err)
+      return callback(result.rows);
+
+    })
+  })
+}
 
 // define the home page route
 // api.get('/tasks/:user_id', function (req, res) {

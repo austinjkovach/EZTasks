@@ -5,6 +5,7 @@ var Task = require('../models/tasks')
 var helpers = require('../helpers/helpers')
 var wakatimeService = require('../helpers/wakatimeService')
 var auth = require('../../config/auth')
+var path = require('path');
 
 var wakatimeController = require('../controllers/wakatimeController.js')
 var taskController = require('../controllers/taskController.js')
@@ -19,7 +20,8 @@ module.exports = function(app, passport) {
     let authRoutes = require('./auth')(passport);
 
     var lastTimestamp = '';
-    app.use(express.static('client'))
+    // app.use(express.static('client'))
+    app.use(express.static(__dirname + '/dist'));
 
     // =====================================
     // REACT ===============================
@@ -34,9 +36,15 @@ module.exports = function(app, passport) {
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
-    app.get('/', isLoggedIn, function(req, res) {
-        res.redirect('/weekview'); // load the index.ejs file
+
+    app.get('*', function (req, res) {
+      res.sendFile(path.resolve('dist/index.html'));
     });
+
+
+    // app.get('/', isLoggedIn, function(req, res) {
+    //     res.redirect('/weekview'); // load the index.ejs file
+    // });
 
     // =====================================
     // LOGIN ===============================

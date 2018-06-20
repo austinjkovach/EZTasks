@@ -1,3 +1,4 @@
 node_modules/
-config/auth.js
+config/auth
+dist/
 .DS_Store
