@@ -14,6 +14,7 @@ var express = require('express')
 // => https://expressjs.com/en/guide/routing.html
 let react = require('./react');
 let api = require('./api');
+let tasks = require('./api/tasks')
 
 module.exports = function(app, passport) {
 
@@ -32,6 +33,11 @@ module.exports = function(app, passport) {
     // API =================================
     // =====================================
     app.use('/api', api)
+
+    // =====================================
+    // TASKS ===============================
+    // =====================================
+    // app.use('/api', api)
 
     // =====================================
     // HOME PAGE (with login links) ========
