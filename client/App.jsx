@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Switch, Route, BrowserRouter } from 'react-router-dom'
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import Home from './components/Home/Home.jsx';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
 
@@ -11,6 +11,7 @@ class App extends React.Component {
   render() {
     return (
       <div id="app">
+        hello
         <Switch>
           <Route exact path='/' component={Home} />
           <Route path='/dashboard' component={Dashboard} />

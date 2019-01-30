@@ -8,15 +8,13 @@ let taskController = require('../controllers/taskController.js')
 let tasks = require('./api/tasks')
 
 
-
 api.use('/tasks', tasks)
 
 module.exports = api;
 
-// //////////////////////////////////////////////
-// /////////////////// NOTES  ///////////////////
-// //////////////////////////////////////////////
-
+////////////
+// NOTES  //
+////////////
 
 // // https://medium.com/studioarmix/learn-restful-api-design-ideals-c5ec915a430f
 
