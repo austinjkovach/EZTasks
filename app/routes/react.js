@@ -1,17 +1,18 @@
 let express = require('express');
 let react = express.Router();
+var path = require('path');
 
 var taskController = require('../controllers/taskController.js')
 
-
-// middleware that is specific to this router
+// middleware that is specific to this router (demonstration)
 react.use(function timeLog (req, res, next) {
   console.log('Time: ', Date.now())
   next()
 })
+
 // define the home page route
 react.get('/', function (req, res) {
-  res.send(req.user && req.user.email)
+  res.sendFile(path.resolve('dist/index.html'));
 })
 // define the about route
 react.get('/about', function (req, res) {
