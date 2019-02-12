@@ -12,7 +12,7 @@ module.exports = function(passport) {
 
   auth.get('/google/callback',
       passport.authenticate('google', {
-          successRedirect : '/react',
+          successRedirect : '/dashboard',
           failureRedirect : '/'
       })
   );

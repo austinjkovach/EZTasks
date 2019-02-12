@@ -8,7 +8,7 @@ class Home extends React.Component {
   render() {
     return (
       <div id="home">
-        <a className="btn btn-danger" href="/auth/google">Sign in with Google</a>
+        <a className="btn btn-danger" href="/auth/google">Sign in with REACT (Google)</a>
       </div>
     )
   }

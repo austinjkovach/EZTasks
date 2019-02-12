@@ -27,9 +27,7 @@ app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secre
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
-// app.use(express.static(__dirname + '/views'))
 
-app.use(express.static(__dirname + '/client'))
 app.use(express.static(__dirname + '/dist'))
 
 // routes ======================================================================

@@ -1,18 +1,18 @@
 import React from 'react';
-import { render } from 'react-dom';
 import axios from 'axios';
 
 import Task from '../Task/Task.jsx';
 import './Dashboard.scss';
 
 import moment from 'moment';
+import { addDays } from 'date-fns';
 
 
 // HOLY SHIT PLEASE ABSTRACT THIS
 function getWeekDateRangeFromUnixTimestamp(unix_timestamp) {
-let current = moment(unix_timestamp);
-let weekStart = moment(current.startOf('week'));
-let weekEnd = moment(current.endOf('week'));
+  let current = moment(unix_timestamp);
+  let weekStart = moment(current.startOf('week'));
+  let weekEnd = moment(current.endOf('week'));
 
 
   return {
@@ -28,11 +28,20 @@ class Dashboard extends React.Component {
     this.state = {
       tasks: [],
       textValue: '',
+      editPanelId: null,
+      days: [
+        'SUNDAY',
+        'MONDAY',
+        'TUESDAY',
+        'WEDNESDAY',
+        'THURSDAY',
+        'FRIDAY',
+        'SATURDAY',
+      ]
     }
 
     this.handleNewTaskSubmit = this.handleNewTaskSubmit.bind(this);
     this.handleCompleteButtonClick = this.handleCompleteButtonClick.bind(this);
-    this.handleEditButtonClick = this.handleEditButtonClick.bind(this);
     this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
 
@@ -43,11 +52,10 @@ class Dashboard extends React.Component {
     let currentDate = Date.now();
     let dateRange = getWeekDateRangeFromUnixTimestamp(currentDate);
 
-
-
     axios.get(`/api/tasks?start=${dateRange.start}&end=${dateRange.end}`)
       .then(res => {
         let tasks = res.data
+        console.log('tasks:', tasks)
         this.setState({tasks})
       })
       .catch(err => {console.log({err})})
@@ -69,11 +77,32 @@ class Dashboard extends React.Component {
       .catch(err => {console.log({err})})
       this.setState({textValue: ''})
   }
-  handleCompleteButtonClick(task_id) {
-    console.log({task_id})
-  }
-  handleEditButtonClick(task_id) {
-    console.log('edit', {task_id})
+  handleCompleteButtonClick(task_id, completed) {
+    // **** return only updated task
+    // **** update state with diff between old state and updated DB record
+    // **** toggle complete on click
+    // TODO Show edit panel
+    // TODO Allow editing
+    // TODO Allow favoriting
+    // TODO Add Drag and Drop functionality
+    // **** Change "starred" to "favorite" in DB
+    
+    axios.post(`/api/tasks/complete/${task_id}`, {completed: completed})
+      .then((response) => {
+        let {tasks} = this.state
+        
+        
+        let newTasks = tasks.map(t => {
+          let task = Object.assign(t);
+          if(t.id === task_id) {
+            
+            return response.data[0]
+          }
+          return task
+        })
+        this.setState({tasks: newTasks})
+      })
+      .catch(err => {console.log({err})})
   }
   handleDeleteButtonClick(task_id) {
     // OPTIMISTIC
@@ -88,18 +117,26 @@ class Dashboard extends React.Component {
     return (
       <div id="dashboard">
         <form id="newTaskForm" onSubmit={this.handleNewTaskSubmit}>
-          <input id="newTaskTextField" name="newTaskValue" type="text" placeholder="Add Task" value={this.state.textValue} onChange={this.handleChange} />
-          <button id="newTaskSubmit" type="submit" >+</button>
+          <input id="newTaskTextField" name="newTaskValue" type="text" placeholder="Add Task" value={this.state.textValue} onChange={this.handleChange} tabIndex={0} autoFocus />
+          <button id="newTaskSubmit" type="submit">+</button>
         </form>
-        {
-          this.state.tasks && this.state.tasks.map(task => (
-            <Task
-              key={task.id}
-              {...task}
-              deleteTask={() => this.handleDeleteButtonClick(task.id)}
-            />
-          ))
-        }
+        <div className="week">
+          {
+            this.state.days.map((d, i) => 
+              <div className={`container ${i}`}>
+              <h3>{d}</h3>
+              {
+                this.state.tasks.filter(task => task.day_of_week === i).map(task => <Task
+                  key={task.id}
+                  data={task}
+                  completeTask={this.handleCompleteButtonClick}
+                  deleteTask={this.handleDeleteButtonClick}
+                />)
+              }            
+            </div>    
+              )
+          }
+        </div>
       </div>
     )
   }
