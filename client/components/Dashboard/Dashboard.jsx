@@ -84,19 +84,6 @@ class Dashboard extends React.Component {
       this.setState({textValue: ''})
   }
   handleCompleteButtonClick(task_id, completed) {
-    // **** return only updated task
-    // **** update state with diff between old state and updated DB record
-    // **** toggle complete on click
-    // **** Change "starred" to "favorite" in DB
-    // **** Show edit panel
-    // TODO Fix Conditional Rendering in EditPanel
-    // TODO Allow editing
-    // TODO Change days of week label to date
-    // TODO Sanitize "Add Task" Input & allow special characters
-    // TODO Allow favoriting
-    // TODO Add Drag and Drop functionality
-    // TODO Hook up Wakatime
-    
     axios.post(`/api/tasks/complete/${task_id}`, {completed: completed})
       .then((response) => {
         let {tasks} = this.state
