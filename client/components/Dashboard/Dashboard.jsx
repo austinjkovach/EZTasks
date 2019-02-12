@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-import Task from '../Task/Task.jsx';
+import TaskContainer from '../TaskContainer/TaskContainer.jsx';
 import './Dashboard.scss';
 
 import moment from 'moment';
@@ -84,6 +84,7 @@ class Dashboard extends React.Component {
     // **** Change "starred" to "favorite" in DB
     // TODO Show edit panel
     // TODO Allow editing
+    // TODO Change days of week label to date
     // TODO Allow favoriting
     // TODO Add Drag and Drop functionality
     // TODO Hook up Wakatime
@@ -124,18 +125,13 @@ class Dashboard extends React.Component {
         <div className="week">
           {
             this.state.days.map((d, i) => 
-              <div className={`container ${i}`}>
-              <h3>{d}</h3>
-              {
-                this.state.tasks.filter(task => task.day_of_week === i).map(task => <Task
-                  key={task.id}
-                  data={task}
-                  completeTask={this.handleCompleteButtonClick}
-                  deleteTask={this.handleDeleteButtonClick}
-                />)
-              }            
-            </div>    
-              )
+              <TaskContainer 
+                key={i}
+                index={i}
+                label={d}
+                tasks={this.state.tasks.filter(task => task.day_of_week === i)}
+              />
+            )
           }
         </div>
       </div>

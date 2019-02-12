@@ -1,16 +1,19 @@
 import React from 'react';
-import './TaskContainer.scss';
+import Task from '../Task/Task.jsx';
+// import './TaskContainer.scss';
 
 const TaskContainer = props => (
   <div className={`container ${props.index}`}>
-    <h3>{props.day}</h3>
+    <h3>{props.label}</h3>
     {
-    this.props.tasks.map(task => <Task
-        key={task.id}
-        {...task}
-        showEditPanel={this.showEditPanel}
-        deleteTask={this.handleDeleteButtonClick}
-    />)
+      props.tasks.map(task => (
+        <Task
+          key={task.id}
+          data={task}
+          completeTask={props.completeTask}
+          deleteTask={props.deleteTask}
+        />
+      ))
     }            
   </div>    
 )
