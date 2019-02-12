@@ -11,6 +11,7 @@ const TaskContainer = props => (
           key={task.id}
           data={task}
           completeTask={props.completeTask}
+          editTask={props.editTask}
           deleteTask={props.deleteTask}
         />
       ))

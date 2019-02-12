@@ -1,12 +1,16 @@
 import React from 'react';
+
+// LIBRARIES
 import axios from 'axios';
-
-import TaskContainer from '../TaskContainer/TaskContainer.jsx';
-import './Dashboard.scss';
-
 import moment from 'moment';
 import { addDays } from 'date-fns';
 
+// COMPONENTS
+import TaskContainer from '../TaskContainer/TaskContainer.jsx';
+import EditPanel from '../EditPanel/EditPanel.jsx';
+
+// STYLES
+import './Dashboard.scss';
 
 // HOLY SHIT PLEASE ABSTRACT THIS
 function getWeekDateRangeFromUnixTimestamp(unix_timestamp) {
@@ -28,7 +32,7 @@ class Dashboard extends React.Component {
     this.state = {
       tasks: [],
       textValue: '',
-      editPanelId: null,
+      editPanelObj: null,
       days: [
         'SUNDAY',
         'MONDAY',
@@ -42,6 +46,8 @@ class Dashboard extends React.Component {
 
     this.handleNewTaskSubmit = this.handleNewTaskSubmit.bind(this);
     this.handleCompleteButtonClick = this.handleCompleteButtonClick.bind(this);
+    this.handleEditButtonClick = this.handleEditButtonClick.bind(this);
+    this.handleEditPanelCloseClick = this.handleEditPanelCloseClick.bind(this);
     this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
 
@@ -82,9 +88,11 @@ class Dashboard extends React.Component {
     // **** update state with diff between old state and updated DB record
     // **** toggle complete on click
     // **** Change "starred" to "favorite" in DB
-    // TODO Show edit panel
+    // **** Show edit panel
+    // TODO Fix Conditional Rendering in EditPanel
     // TODO Allow editing
     // TODO Change days of week label to date
+    // TODO Sanitize "Add Task" Input & allow special characters
     // TODO Allow favoriting
     // TODO Add Drag and Drop functionality
     // TODO Hook up Wakatime
@@ -108,9 +116,15 @@ class Dashboard extends React.Component {
   }
   handleDeleteButtonClick(task_id) {
     // OPTIMISTIC
+    axios.delete(`/api/tasks/${task_id}`)
     let tasks = this.state.tasks.filter(t => t.id !== task_id);
     this.setState({tasks})
-    axios.delete(`/api/tasks/${task_id}`)
+  }
+  handleEditButtonClick(task_id) {
+    this.setState({editPanelObj: {id: task_id}})
+  }
+  handleEditPanelCloseClick() {
+    this.setState({editPanelObj: null})
   }
   handleChange(e) {
     this.setState({textValue: e.target.value});
@@ -129,11 +143,15 @@ class Dashboard extends React.Component {
                 key={i}
                 index={i}
                 label={d}
+                completeTask={this.handleCompleteButtonClick}
+                editTask={this.handleEditButtonClick}
+                deleteTask={this.handleDeleteButtonClick}
                 tasks={this.state.tasks.filter(task => task.day_of_week === i)}
               />
             )
           }
         </div>
+        <EditPanel editPanelObj={this.state.editPanelObj} closeEditPanel={this.handleEditPanelCloseClick} visible={(this.state.editPanelObj !== null)}/>
       </div>
     )
   }
