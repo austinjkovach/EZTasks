@@ -81,11 +81,12 @@ class Dashboard extends React.Component {
     // **** return only updated task
     // **** update state with diff between old state and updated DB record
     // **** toggle complete on click
+    // **** Change "starred" to "favorite" in DB
     // TODO Show edit panel
     // TODO Allow editing
     // TODO Allow favoriting
     // TODO Add Drag and Drop functionality
-    // **** Change "starred" to "favorite" in DB
+    // TODO Hook up Wakatime
     
     axios.post(`/api/tasks/complete/${task_id}`, {completed: completed})
       .then((response) => {
