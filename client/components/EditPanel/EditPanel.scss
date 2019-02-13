@@ -1,5 +1,5 @@
 .edit_panel {
-    display: none;
+    display: block;
     position: absolute;
     top: 0;
     right: 0;
@@ -8,8 +8,4 @@
     width: 100px;
     border: 1px solid black;
     background-color: lightcoral;
-
-    &.visible {
-        display: block;
-    }
 }

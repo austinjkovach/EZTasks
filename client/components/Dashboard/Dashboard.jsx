@@ -117,6 +117,11 @@ class Dashboard extends React.Component {
     this.setState({textValue: e.target.value});
   }
   render() {
+
+    const EditPanelComponent = this.state.editPanelObj !== null ? 
+      (<EditPanel editPanelObj={this.state.editPanelObj} closeEditPanel={this.handleEditPanelCloseClick} />) :
+      (null)
+
     return (
       <div id="dashboard">
         <form id="newTaskForm" onSubmit={this.handleNewTaskSubmit}>
@@ -138,7 +143,7 @@ class Dashboard extends React.Component {
             )
           }
         </div>
-        <EditPanel editPanelObj={this.state.editPanelObj} closeEditPanel={this.handleEditPanelCloseClick} visible={(this.state.editPanelObj !== null)}/>
+        { EditPanelComponent }
       </div>
     )
   }

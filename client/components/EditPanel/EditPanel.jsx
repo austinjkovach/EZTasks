@@ -13,10 +13,10 @@ export default class EditPanel extends React.Component {
     render() {
 
         return (
-            <div id={'editPanel'} className={ this.props.visible ? 'edit_panel visible' : 'edit_panel'}>
+            <div id={'editPanel'} className={'edit_panel'}>
                 Edit Panel
                 <div>
-                    {this.props.editPanelObj && this.props.editPanelObj.id}
+                    {this.props.editPanelObj.id}
                 </div>
                 <button className={'btn btn-danger'} onClick={this.props.closeEditPanel}>X</button>
             </div>
