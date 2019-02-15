@@ -124,7 +124,9 @@ class Dashboard extends React.Component {
     e.preventDefault()
     payload.completed_on = Date.now()
     console.log('edit submit', payload)
-    axios.put(`/api/tasks/${payload.id}`, payload)
+    axios.put(`/api/tasks/${payload.id}`, payload, (response) => {
+      console.log('response', response)
+    })
   }
   handleChange(e) {
     this.setState({textValue: e.target.value});
