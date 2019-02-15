@@ -46,10 +46,15 @@ class Dashboard extends React.Component {
 
     this.handleNewTaskSubmit = this.handleNewTaskSubmit.bind(this);
     this.handleCompleteButtonClick = this.handleCompleteButtonClick.bind(this);
+
     this.handleEditButtonClick = this.handleEditButtonClick.bind(this);
     this.handleEditPanelCloseClick = this.handleEditPanelCloseClick.bind(this);
+    this.handleEditPanelSubmitClick = this.handleEditPanelSubmitClick.bind(this);
+
     this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
+
     this.handleChange = this.handleChange.bind(this);
+    this.findTaskById = this.findTaskById.bind(this);
 
   }
   componentDidMount() {
@@ -108,18 +113,29 @@ class Dashboard extends React.Component {
     this.setState({tasks})
   }
   handleEditButtonClick(task_id) {
-    this.setState({editPanelObj: {id: task_id}})
+
+    let taskObj = this.findTaskById(this.state.tasks, task_id)
+    this.setState({editPanelObj: taskObj})
   }
   handleEditPanelCloseClick() {
     this.setState({editPanelObj: null})
   }
+  handleEditPanelSubmitClick(e, payload) {
+    e.preventDefault()
+    payload.completed_on = Date.now()
+    console.log('edit submit', payload)
+    axios.put(`/api/tasks/${payload.id}`, payload)
+  }
   handleChange(e) {
     this.setState({textValue: e.target.value});
+  }
+  findTaskById(tasks, task_id) {
+    return tasks.filter(task => task.id === task_id)[0]
   }
   render() {
 
     const EditPanelComponent = this.state.editPanelObj !== null ? 
-      (<EditPanel editPanelObj={this.state.editPanelObj} closeEditPanel={this.handleEditPanelCloseClick} />) :
+      (<EditPanel editPanelObj={this.state.editPanelObj} closeEditPanel={this.handleEditPanelCloseClick} editPanelSubmit={this.handleEditPanelSubmitClick} />) :
       (null)
 
     return (

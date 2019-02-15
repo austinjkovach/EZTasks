@@ -187,6 +187,17 @@ function getUserTasksInDateRange(start, end, callback) {
 function updateTask(task_id, data) {
   console.log('UPDATE id', task_id)
 
+  pool.connect(function(err, client, done) {
+    if(err) {
+      return console.error('error connecting UPDATE', err)
+    }
+    // TODO AUSTIN finish UPDATE query
+    const query = `
+      UPDATE tasks
+      SET text, completed, assigned_time
+    `
+  })
+
     // id
     // text
     // completed

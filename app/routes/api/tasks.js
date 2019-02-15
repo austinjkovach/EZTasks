@@ -36,7 +36,6 @@ tasks.post('/', (req, res)  => {
 
 tasks.post('/complete/:task_id', (req, res)  => {
   taskController.toggleCompleteTask(req.params.task_id, req.body.completed, (response) => {
-    console.log('COMPLETE RESPONSE', response)
     res.write(JSON.stringify(response));
     res.end();
   })
@@ -44,6 +43,8 @@ tasks.post('/complete/:task_id', (req, res)  => {
 
 tasks.put('/:task_id', (req, res) => {
   let data = req.body;
+  let {task_id} = req.params
+  console.log('PUT data', data, task_id)
 
   taskController.updateTask(task_id, data, (response) => {
     res.write(JSON.stringify(response));
