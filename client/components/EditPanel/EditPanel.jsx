@@ -21,16 +21,29 @@ export default class EditPanel extends React.Component {
         }
     }
     componentWillReceiveProps(nextProps) {
-        this.setState({defaultValues: nextProps.editPanelObj})
+        let {
+            id,
+            completed,
+            text,
+            completed_on,
+            assigned_time,
+        } = nextProps.editPanelObj
+
+        this.setState({
+            id,
+            completed,
+            text,
+            completed_on,
+            assigned_time
+        })
     }
     updateCompleted(nextState) {
         this.setState({completed: nextState})
     }
     render() {
-        console.log(this.state.completed)
         return (
             <div id={'editPanel'} className={'edit_panel'}>
-                Edit Panel
+                <h2>Edit Panel</h2>
                 <div>
                     {this.props.editPanelObj.id}
                     <form id="editForm">
@@ -40,7 +53,9 @@ export default class EditPanel extends React.Component {
                         <input id="editCheckbox" type="checkbox" checked={this.state.completed || false} onClick={(e) => this.setState({completed: !this.state.completed})} />
 
                         <input id="editDate" type="date" />
-                        <button type="submit" className='btn btn-success' onClick={(e) => this.props.editPanelSubmit(e, this.state)}>Submit</button>
+                        <div>
+                            <button type="submit" className='btn btn-success' onClick={(e) => this.props.editPanelSubmit(e, this.state)}>Submit</button>
+                        </div>
                     </form>
                 </div>
                 <button className={'btn btn-danger'} onClick={this.props.closeEditPanel}>X</button>

@@ -4,7 +4,7 @@
 **** Change "starred" to "favorite" in DB
 **** Show edit panel
 **** Fix Conditional Rendering in EditPanel
-TODO Allow editing
+**** Allow editing
 TODO Change days of week label to date
 TODO Sanitize "Add Task" Input & allow special characters
 TODO Allow favoriting

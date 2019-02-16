@@ -45,7 +45,7 @@ tasks.put('/:task_id', (req, res) => {
   let data = req.body;
   let {task_id} = req.params
   console.log('PUT data', data, task_id)
-
+  
   taskController.updateTask(task_id, data, (response) => {
     res.write(JSON.stringify(response));
     res.end();
@@ -54,6 +54,13 @@ tasks.put('/:task_id', (req, res) => {
 
 tasks.delete('/:task_id', (req, res) => {
   taskController.deleteTask(req.params.task_id, results => (results))
+})
+
+tasks.post('/complete/:task_id', (req, res)  => {
+  taskController.toggleCompleteTask(req.params.task_id, req.body.completed, (response) => {
+    res.write(JSON.stringify(response));
+    res.end();
+  })
 })
 
 module.exports = tasks

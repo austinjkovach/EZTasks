@@ -4,8 +4,14 @@
     top: 0;
     right: 0;
 
-    height: 300px;
-    width: 100px;
+    height: 500px;
+    width: 300px;
     border: 1px solid black;
     background-color: lightcoral;
+
+    
+    input[type='text'], input[type='date'] {
+        max-width: 100%;
+    }
 }
+

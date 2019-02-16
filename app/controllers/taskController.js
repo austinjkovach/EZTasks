@@ -191,12 +191,20 @@ function updateTask(task_id, data, callback) {
     if(err) {
       return console.error('error connecting UPDATE', err)
     }
-    // TODO AUSTIN return update row from UPDATE query
+    // TODO AUSTIN -> UPDATE query should not return value - need to handle this on front end
     const query = `
       UPDATE tasks
       SET text = '${data.text}',
           completed = ${data.completed}
       WHERE id = ${task_id}
+      RETURNING
+        id,
+        text,
+        completed,
+        EXTRACT(dow from assigned_time) AS day_of_week,
+        created_on,
+        assigned_time,
+        favorite
     `
 
     client.query(query, function(err, result) {

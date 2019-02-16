@@ -124,9 +124,14 @@ class Dashboard extends React.Component {
     e.preventDefault()
     payload.completed_on = Date.now()
     console.log('edit submit', payload)
-    axios.put(`/api/tasks/${payload.id}`, payload, (response) => {
-      console.log('response', response)
-    })
+    axios.put(`/api/tasks/${payload.id}`, payload)
+      .then(response => {
+        let response_task = response.data[0]
+        let {tasks} = this.state
+        let newTasks = tasks.map(t => t.id === response_task.id ? response_task : t)
+        
+        this.setState({tasks: newTasks, editPanelObj: response_task})
+      })
   }
   handleChange(e) {
     this.setState({textValue: e.target.value});
