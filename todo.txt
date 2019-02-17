@@ -5,9 +5,12 @@
 **** Show edit panel
 **** Fix Conditional Rendering in EditPanel
 **** Allow editing
+TODO Edit Task assigned_time
 TODO Change days of week label to date
 TODO Sanitize "Add Task" Input & allow special characters
 TODO Allow favoriting
 TODO Add Drag and Drop functionality
 TODO Hook up Wakatime
 TODO Figure out why build time is slow on change
+
+styling: https://www.behance.net/gallery/65259931/ToDo-App-Dark-Version

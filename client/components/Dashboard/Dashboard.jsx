@@ -139,12 +139,11 @@ class Dashboard extends React.Component {
   findTaskById(tasks, task_id) {
     return tasks.filter(task => task.id === task_id)[0]
   }
-  render() {
 
+  render() {
     const EditPanelComponent = this.state.editPanelObj !== null ? 
       (<EditPanel editPanelObj={this.state.editPanelObj} closeEditPanel={this.handleEditPanelCloseClick} editPanelSubmit={this.handleEditPanelSubmitClick} />) :
       (null)
-
     return (
       <div id="dashboard">
         <form id="newTaskForm" onSubmit={this.handleNewTaskSubmit}>
