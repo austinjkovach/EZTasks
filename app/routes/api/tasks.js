@@ -10,6 +10,7 @@ let taskController = require('../../controllers/taskController.js')
 
 tasks.get('/', function (req, res) {
   if(req.query.start && req.query.end) {
+    console.log('getUserTasksInDateRange')
     let tasks = taskController.getUserTasksInDateRange(req.query.start, req.query.end, (response) => {
         res.setHeader('Content-Type', 'application/json');
         res.write(JSON.stringify(response));

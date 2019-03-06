@@ -1,13 +1,41 @@
+$primary: linear-gradient(45deg,#1a1e5a 0,#122d98 100%);
+
 #dashboard {
     position: relative;
 }
-
 
 .week {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
 }
+
 .container {
     flex: 1
+}
+
+#newTaskForm {
+    display: inline-block;
+    position: relative;
+}
+
+#newTaskTextField {
+    border-radius: 51px;
+    border: 0;
+    background: #e3e3e3;
+    padding-left: 20px;
+    height: 40px;
+    width: 240px;
+    outline: red;
+    color: #444;
+}
+
+#newTaskSubmit {
+    position: absolute;
+    right: 0;
+    height: 40px;
+    width: 40px;
+    background: $primary;
+    color: white;
+    border-radius: 20px;
 }

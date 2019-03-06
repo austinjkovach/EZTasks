@@ -122,12 +122,11 @@ function getTaskById(task_id, callback) {
 
     client.query(query, function(err, result) {
       if(err){
-          return console.error('error running SELECT query', err);
+        return console.error('error running SELECT query', err);
       }
 
       done(err)
       return callback(result.rows);
-
     })
   })
 }
@@ -139,7 +138,7 @@ function getUserTasks(user_id, callback) {
     }
 
     const query = `
-      SELECT id, text, completed, day, created_on, assigned_time, favorite
+      SELECT id, text, completed, day, created_on, assigned_time::date, favorite
       FROM tasks
       WHERE owner=${user_id}
       ORDER BY assigned_time
@@ -165,7 +164,15 @@ function getUserTasksInDateRange(start, end, callback) {
     }
 
     const query = `
-      SELECT id, text, completed, day, created_on, assigned_time, EXTRACT(dow from assigned_time) AS day_of_week, favorite
+      SELECT 
+        id,
+        text,
+        completed,
+        day,
+        created_on,
+        assigned_time,
+        EXTRACT(dow from assigned_time) AS day_of_week,
+        favorite
       FROM tasks
       WHERE owner=${user_id}
       AND EXTRACT(EPOCH FROM assigned_time) BETWEEN '${start}' AND '${end}'

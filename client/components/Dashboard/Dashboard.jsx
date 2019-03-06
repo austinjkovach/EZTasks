@@ -65,8 +65,8 @@ class Dashboard extends React.Component {
 
     axios.get(`/api/tasks?start=${dateRange.start}&end=${dateRange.end}`)
       .then(res => {
-        let tasks = res.data
-        console.log('tasks:', tasks)
+        let tasks = res.data.map(function(t) { t.assigned_time = moment(t.assigned_time).format('YYYY-MM-DD'); return t})
+        let m = new moment(tasks[0].assigned_time)
         this.setState({tasks})
       })
       .catch(err => {console.log({err})})
@@ -82,8 +82,16 @@ class Dashboard extends React.Component {
     axios.post('/api/tasks', data)
       .then((response) => {
         let {tasks} = this.state
-        let newTasks = [...tasks, ...response.data]
-        this.setState({tasks: newTasks})
+        let data = Object.assign(response.data)
+        console.log('DATA', data)
+
+        // data.assigned_time = moment(data.assigned_time).format('YYYY-MM-DD');
+
+
+        // let newTasks = [...tasks]
+        // newTasks.push(data)
+        // console.log('NEWTASKS2 ', newTasks)
+        this.setState({tasks: [...response.data, ...tasks ]})
       })
       .catch(err => {console.log({err})})
       this.setState({textValue: ''})

@@ -1,9 +1,35 @@
+$primary: linear-gradient(45deg,#1a1e5a 0,#122d98 100%);
+$secondary: linear-gradient(45deg,#fa9b00 0,#f4ca12 100%);
+
+$gray: #474750;
+$dark-gray: #3C3B4B;
+
 .task {
-  border: 1px solid black;
-  background: gray;
+  color: white;
+  background: $primary;
+  
   padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 3px;
 }
 
 .task.complete {
-  background: green;
+  background: $secondary;
+  color: $dark-gray;
+}
+
+
+.task-btn {
+  color: white;
+  border: none;
+  border-radius: 5px;
+  background: $dark-gray;
+}
+
+.btn-complete {
+  width: 50%;
+}
+
+.btn-edit, .btn-delete {
+  width: 25%;
 }
